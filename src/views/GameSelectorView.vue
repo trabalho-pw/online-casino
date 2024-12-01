@@ -1,12 +1,10 @@
 <template>
     <div>
-      <GameCard
-        title="Título Jogo 1"
-        imageSrc="caminho-para-imagem-1.jpg"
-      />
-      <GameCard
-        title="Título Jogo 2"
-        imageSrc="caminho-para-imagem-2.jpg"
+      <GameCard 
+        title="Jogo Fantástico" 
+        imageSrc="https://example.com/imagem.jpg" 
+        description="Este é um jogo incrível onde você pode explorar mundos fantásticos e aventuras emocionantes." 
+        gameUrl="https://example.com/jogo"
       />
     </div>
   </template>
