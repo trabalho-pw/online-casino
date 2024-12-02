@@ -45,12 +45,12 @@
   .user-card {
     display: flex;
     align-items: center;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 8px;
     padding: 10px;
-    width: 60vw;
+    width: 50vw;
     height: 25vh;
-    background-color: #f9f9f9;
+    background-color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   

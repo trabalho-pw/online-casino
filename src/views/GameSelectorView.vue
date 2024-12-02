@@ -13,6 +13,7 @@
         :title="game.title"
         :imageSrc="game.imageSrc"
         :description="game.description"
+        :reduced_description="game.reduced_description"
         :gameUrl="game.gameUrl"
       />
     </div>
@@ -36,18 +37,21 @@ export default {
           title: "Caça-níquel",
           imageSrc: "src/assets/caca-niquel-svg.png",
           description: "Explore a emoção do cassino com nosso jogo de Caça-níquel! Gire e descubra combinações vencedoras de símbolos para ganhar prêmios incríveis. Aposte e sinta a adrenalina enquanto busca o grande prêmio!",
+          reduced_description: "Explore a emoção do cassino com nosso jogo de Caça-níquel!",
           gameUrl: "#",
         },
         {
           title: "Blackjack",
           imageSrc: "src/assets/blackjack-svg.png",
           description: "Entre na ação do Blackjack! Desafie a sorte e sua habilidade para alcançar a melhor mão possível, com o objetivo de somar 21 pontos, sem ultrapassar. Com regras simples e grandes prêmios, o Blackjack oferece uma experiência emocionante e cheia de adrenalina.",
+          reduced_description: "Entre na ação do Blackjack, desafie a sorte para alcançar a melhor mão possível!",
           gameUrl: "#",
         },
         {
           title: "Campo Minado",
           imageSrc: "src/assets/campo-minado-svg.webp",
           description: "Teste sua sorte no emocionante jogo de Diamantes e Bombas! Similar ao clássico Campo Minado, seu objetivo é encontrar os diamantes espalhados pelo campo e acumular prêmios em dinheiro, a cada acerto mais diamantes e recompensas surgem, mas o risco de explosão está sempre presente.",
+          reduced_description: "Teste sua sorte no emocionante jogo de Diamantes e Bombas!",
           gameUrl: "/mines",
         },
       ],

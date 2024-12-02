@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="game-card" @click="showModal = true">
-      <div class="title">{{ title }}</div>
+      <div>
+        <div class="title">{{ title }}</div>
+        <p class="reduced_description">{{ reduced_description }}</p>
+      </div>
       <div class="image-container">
         <img :src="imageSrc" alt="Imagem do Jogo" />
       </div>
@@ -35,6 +38,10 @@ export default {
       type: String,
       required: true,
     },
+    reduced_description: {
+      type: String,
+      required: true,
+    },
     gameUrl: {
       type: String,
       required: true,
@@ -60,11 +67,11 @@ export default {
 .game-card {
   display: flex;
   justify-content: space-between;
-  background-color: #ddd;
+  background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
-  width: 60vw;
+  width: 50vw;
   height: 22vh;
   cursor: pointer;
 }
@@ -89,6 +96,11 @@ export default {
   max-width: 100%;
   max-height: 100%;
   object-fit: cover;
+}
+
+.reduced_description{
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
 }
 
 .modal-overlay {
