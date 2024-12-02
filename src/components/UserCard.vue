@@ -67,15 +67,17 @@
   }
   
   .user-name {
+    font-family: "Bebas Neue", sans-serif;
     font-size: 36px;
     font-weight: bold;
     margin: 0;
-    color: #333;
+    color: #223F4A;
   }
   
   .user-coins {
+    font-family: 'Lato', sans-serif;
     font-size: 24px;
-    color: #666;
+    color: #DEB45F;
   }
   
   .level-section {
@@ -83,9 +85,10 @@
   }
   
   .level-label {
+    font-family: 'Lato', sans-serif;
     font-size: 20px;
-    color: #666;
     margin-bottom: 4px;
+    color: #223F4A;
   }
   
   .level-bar-container {
