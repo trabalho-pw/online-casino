@@ -1,58 +1,64 @@
 <template>
-    <div id="app" class="container">
-        <h1>Jogo Mines</h1>
-        <div class="game-board">
-            <div 
-                v-for="(square, index) in board" 
-                :key="index" 
-                class="square" 
-                :class="{ clicked: square.clicked, mine: isGameOver && square.mine }"
-                @click="handleClick(index)"
-            >
-            
-                <i v-if="square.clicked" :class="square.icon"></i>
-            </div>
-
+    <div>
+        <div class="bet-input">
+            <input 
+                type="number" 
+                v-model.number="bet" 
+                placeholder="Insira sua aposta" 
+            />
+            <button @click="placeBet">Apostar</button>
         </div>
-        <div id="status">
-            <p>{{ message }}</p>
-            <p>Prêmio: {{ prize }}</p>
-            <button @click="startGame">Começar Novo Jogo</button>
+
+        <div>
+            <div class="game-board">
+                <div 
+                    v-for="(square, index) in board" 
+                    :key="index" 
+                    class="square" 
+                    :class="{ clicked: square.clicked, mine: isGameOver && square.mine }"
+                    @click=" isBetPlaced && handleClick(index)"
+                >
+                    <i v-if="square.clicked" :class="square.icon"></i>
+                </div>
+            </div>
+            <div class="status">
+                <button @click="startGame">Começar Novo Jogo</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
 export default{
-        name: "MinesGame",
-        data() {
+    name: "MinesGame",
+    data() {
         return {
-            board: [],         // Tabuleiro com os quadrados
-            mines: [],         // Índices das minas
-            isGameOver: false, // Estado do jogo
-            prize: 0,          // Prêmio acumulado
-            totalSquares: 25,  // Total de quadrados no tabuleiro
-            message: "Clique em um quadrado para começar!"
+            board: [],         
+            mines: [],         
+            isGameOver: false, 
+            prize: 0,          
+            totalSquares: 25,  
+            bet: null,         
+            isBetPlaced: false, 
         };
     },
     methods: {
+        
         startGame() {
             this.isGameOver = false;
             this.board = [];
             this.mines = [];
             this.prize = 0;
-            this.message = "Clique em um quadrado para começar!";
-
-            // Cria o tabuleiro
+            
             for (let i = 0; i < this.totalSquares; i++) {
                 this.board.push({ clicked: false, mine: false, icon: "" });
             }
 
-            // Coloca minas aleatoriamente
+            
             this.placeMines();
         },
         placeMines() {
-            let mineCount = 5; // Número de minas no jogo
+            let mineCount = 5; 
             while (this.mines.length < mineCount) {
                 const randomIndex = Math.floor(Math.random() * this.totalSquares);
                 if (!this.mines.includes(randomIndex)) {
@@ -60,10 +66,18 @@ export default{
                 }
             }
 
-            // Marca as minas no tabuleiro (somente internamente, sem exibir)
+            
                 this.mines.forEach(index => {
                 this.board[index].mine = true;
                 });
+        },
+        placeBet() {
+            if (this.bet > 0) {
+                this.isBetPlaced = true;
+                this.startGame();
+            } else {
+                alert("Por favor, insira um valor de aposta válido.");
+            }
         },
         handleClick(index) {
             if (this.isGameOver || this.board[index].clicked) return;
@@ -75,27 +89,23 @@ export default{
                 this.gameOver();
             } else {
                 this.prize += 10;
-                square.icon = "fa fa-face-smile"; // Ícone de diamante
+                square.icon = "fa fa-gem"; 
                 if (this.prize >= 50) {
-                    this.message = "Você venceu!";
                     this.isGameOver = true;
                 }
             }
         },
         gameOver() {
-            this.message = "Game Over! Você clicou em uma mina!";
             this.isGameOver = true;
 
-            // Revela todas as minas
             this.mines.forEach(index => {
                 const mineSquare = this.board[index];
-                mineSquare.icon = "fa fa-face-frown"; // Ícone de bomba
+                mineSquare.icon = "fa fa-bomb"; 
                 mineSquare.clicked = true;
             });
         }
     },
     mounted() {
-        // Inicia o jogo ao carregar a página
         this.startGame();
     }
 };
@@ -103,20 +113,18 @@ export default{
 </script>
 
 <style scoped>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+.bet-input {
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+    gap: 10px;
 }
 
-.container {
-    text-align: center;
-    width: 80%;
-    max-width: 600px;
+input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .game-board {
@@ -125,7 +133,8 @@ body {
     grid-template-rows: repeat(5, 50px);
     gap: 10px;
     justify-content: center;
-    margin-bottom: 20px;
+    
+
 }
 
 .square {
@@ -155,8 +164,10 @@ body {
     background-color: #ec4c4c;
 }
 
-#status {
+.status {
     margin-top: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 button {
@@ -167,6 +178,7 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    
 }
 
 button:hover {
