@@ -4,7 +4,7 @@
       :userName="'João Gamer'"
       :userCoins="1500"
       :levelProgress="70"
-      :userImage="''"
+      :userImage="'src/assets/profile.svg'"
     />
     <GameCard
       v-for="(game, index) in games"
@@ -31,20 +31,20 @@ export default {
     return {
       games: [
         {
-          title: "Jogo 1",
-          imageSrc: "",
+          title: "Caça-níquel",
+          imageSrc: "src/assets/caca-niquel-svg.png",
           description: "Descrição do Jogo 1",
           gameUrl: "#",
         },
         {
-          title: "Jogo 2",
-          imageSrc: "",
+          title: "Blackjack",
+          imageSrc: "src/assets/blackjack-svg.png",
           description: "Descrição do Jogo 2",
           gameUrl: "#",
         },
         {
-          title: "Jogo 3",
-          imageSrc: "",
+          title: "Campo Minado",
+          imageSrc: "src/assets/campo-minado-svg.webp",
           description: "Descrição do Jogo 3",
           gameUrl: "#",
         },
