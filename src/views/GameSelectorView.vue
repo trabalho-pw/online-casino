@@ -41,8 +41,8 @@ export default {
         {
           title: "Blackjack",
           imageSrc: "src/assets/blackjack-svg.png",
-          description: "Descrição do Jogo 2",
-          gameUrl: "#",
+          description: "Jogo de cartas de casino onde o objetivo é ter mais pontos do que o adversário, sem ultrapassar os 21",
+          gameUrl: "./blackjack",
         },
         {
           title: "Campo Minado",
