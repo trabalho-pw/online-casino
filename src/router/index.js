@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { auth } from '../firebase';
+
 import RegisterView from '@/views/RegisterView.vue'
 import LoginView from '@/views/LoginView.vue'
 import GameSelectorView from '../views/GameSelectorView.vue'
@@ -18,6 +20,12 @@ const router = createRouter({
       component: RegisterView,
     },
     {
+      path: '/:userID',
+      name: 'home',
+      component: GameSelectorView,
+      // meta: { requiresAuth: true },
+    },
+    {
       path: '/game_selector',
       name: 'game_selector',
       component: GameSelectorView, 
@@ -29,5 +37,13 @@ const router = createRouter({
     }
   ],
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !auth.currentUser) {
+    next('/');
+  } else {
+    next();
+  }
+});
 
 export default router

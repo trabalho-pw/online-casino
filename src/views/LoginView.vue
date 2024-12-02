@@ -32,7 +32,11 @@ export default {
     },
     async login() {
       try {
-        await signInWithEmailAndPassword(auth, this.user.email, this.user.password);
+        const userCredential = await signInWithEmailAndPassword(auth, this.user.email, this.user.password);
+
+        const uid = userCredential.user.uid
+        router.push('/' + uid)
+        
         console.log('Login bem-sucedido!');
       } catch (error) {
         console.log(error.message);

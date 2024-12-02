@@ -58,6 +58,8 @@ export default {
         await setDoc(doc(db, 'users', uid), {
           name: this.newUser.name,
           email: this.newUser.email,
+          xp: 0,
+          coins: 1000,
         })
 
         this.notificationStore.showNotificationMessage('Conta criada com sucesso!', 'success')
