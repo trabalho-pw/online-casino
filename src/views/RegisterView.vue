@@ -23,6 +23,10 @@ export default {
         .regex(/[a-z]/, 'A senha deve conter ao menos 1 letra minúscula.')
         .regex(/\d/, 'A senha deve conter ao menos 1 número.')
         .regex(/[^A-Za-z0-9]/, 'A senha deve conter ao menos 1 caractere especial.'),
+      usernameSchema: z
+        .string()
+        .min(3, 'O nome de usuário deve ter no mínimo 3 caracteres.')
+        .max(20, 'O nome de usuário deve ter no máximo 20 caracteres.'),
     }
   },
   computed: {
@@ -47,6 +51,7 @@ export default {
             type="text"
             id="name"
             label="Nome de Usuário"
+            :validationSchema="usernameSchema"
             @input="(value) => (newUser.name = value)"
           />
           <FormInput
@@ -64,7 +69,12 @@ export default {
             @input="(value) => (newUser.password = value)"
           />
         </div>
-        <GenericButton @click="console.log(newUser)" type="button" :isValid="isFormValid" />
+        <GenericButton
+          @click="console.log(newUser)"
+          type="button"
+          :isValid="isFormValid"
+          text="criar"
+        />
         <p class="login-msg">
           Já possui uma conta? <button @click="goToLogin" type="button">Fazer Login</button>.
         </p>
