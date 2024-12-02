@@ -2,10 +2,10 @@
   <main>
     <div class="game-cards-container">
       <UserCard
-        :userName="'João Gamer'"
-        :userCoins="1500"
-        :levelProgress="70"
-        :userImage="'src/assets/profile.webp'"
+        :userName="userData?.name || 'Usuário Anônimo'"
+        :userCoins="userData?.coins || 0"
+        :userxp="userData?.xp || 0"
+        :userImage="userData?.profileImage || 'src/assets/profile.webp'"
       />
       <GameCard
         v-for="(game, index) in games"
@@ -23,6 +23,11 @@
 <script>
 import GameCard from "@/components/GameCard.vue";
 import UserCard from "@/components/UserCard.vue";
+import { onAuthStateChanged } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { auth } from '../firebase';
+
+const db = getFirestore()
 
 export default {
   name: "GameCardsView",
@@ -32,6 +37,7 @@ export default {
   },
   data() {
     return {
+      userData: null, 
       games: [
         {
           title: "Caça-níquel",
@@ -56,6 +62,26 @@ export default {
         },
       ],
     };
+  },
+  mounted() {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const uid = user.uid;
+          const userDocRef = doc(db, 'users', uid);
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            this.userData = userDocSnap.data(); 
+          } else {
+            console.error('Usuário não encontrado no Firestore');
+          }
+        } catch (error) {
+          console.error('Erro ao buscar os dados do usuário:', error);
+        }
+      } else {
+        console.log('Nenhum usuário está logado');
+      }
+    });
   },
 };
 </script>

@@ -9,7 +9,7 @@
           <div class="level-bar-container">
             <div
               class="level-bar"
-              :style="{ width: levelProgress + '%' }"
+              :style="{ width: xp + '%' }"
             ></div>
           </div>
         </div>
@@ -33,7 +33,7 @@
         type: String,
         default: "", 
       },
-      levelProgress: {
+      xp: {
         type: Number,
         default: 0, 
       },

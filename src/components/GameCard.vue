@@ -84,8 +84,8 @@ export default {
 }
 
 .image-container {
-  width: 27.5vh;
-  height: 17.5vh;
+  width: 25vh;
+  height: 20vh;
   display: flex;
   justify-content: center;
   align-items: center;
