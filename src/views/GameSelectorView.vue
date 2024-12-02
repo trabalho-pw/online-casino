@@ -4,7 +4,7 @@
       <UserCard
         :userName="userData?.name || 'Usuário Anônimo'"
         :userCoins="userData?.coins || 0"
-        :userxp="userData?.xp || 0"
+        :xp="userData?.xp || 0"
         :userImage="userData?.profileImage || 'src/assets/profile.webp'"
       />
       <GameCard
