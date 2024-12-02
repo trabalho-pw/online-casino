@@ -2,7 +2,8 @@
 import GenericContainer from '../components/GenericContainer.vue'
 import FormInput from '../components/FormInput.vue'
 import GenericButton from '../components/GenericButton.vue'
-import router from '@/router';
+import router from '@/router'
+import { z } from 'zod'
 
 export default {
   name: 'RegisterView',
@@ -14,6 +15,14 @@ export default {
   data() {
     return {
       newUser: { name: '', email: '', password: '' },
+      emailSchema: z.string().email('Formato de e-mail inválido'),
+      passwordSchema: z
+        .string()
+        .min(8, 'A senha deve ter no mínimo 8 caracteres.')
+        .regex(/[A-Z]/, 'A senha deve conter ao menos 1 letra maiúscula.')
+        .regex(/[a-z]/, 'A senha deve conter ao menos 1 letra minúscula.')
+        .regex(/\d/, 'A senha deve conter ao menos 1 número.')
+        .regex(/[^A-Za-z0-9]/, 'A senha deve conter ao menos 1 caractere especial.'),
     }
   },
   computed: {
@@ -24,8 +33,8 @@ export default {
   methods: {
     goToLogin() {
       router.push('/')
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -44,17 +53,21 @@ export default {
             type="email"
             id="email"
             label="Email"
+            :validationSchema="emailSchema"
             @input="(value) => (newUser.email = value)"
           />
           <FormInput
             type="password"
             id="password"
             label="Senha"
+            :validationSchema="passwordSchema"
             @input="(value) => (newUser.password = value)"
           />
         </div>
         <GenericButton @click="console.log(newUser)" type="button" :isValid="isFormValid" />
-        <p class="login-msg">Já possui uma conta? <button @click="goToLogin" type="button">Fazer Login</button>.</p>
+        <p class="login-msg">
+          Já possui uma conta? <button @click="goToLogin" type="button">Fazer Login</button>.
+        </p>
       </form>
     </GenericContainer>
   </main>
@@ -105,5 +118,12 @@ main {
 
 .login-msg button:hover {
   color: #e63948;
+}
+
+@media screen and (min-width: 1024px) {
+  .register-form {
+    justify-content: left;
+    padding-top: 10%;
+  }
 }
 </style>

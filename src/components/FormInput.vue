@@ -18,22 +18,63 @@ export default {
       type: String,
       required: true,
     },
+    modelValue: {
+      type: String,
+      default: '',
+    },
+    validationSchema: {
+      type: Object,
+      required: false,
+    },
   },
-  emits: ['input'],
+  emits: ['input', 'validation-error'],
+  data() {
+    return {
+      value: this.modelValue,
+      error: '',
+    }
+  },
+  watch: {
+    value(newValue) {
+      this.validateInput(newValue)
+    },
+  },
+  methods: {
+    validateInput(value) {
+      if (!this.validationSchema) {
+        this.error = ''
+        this.$emit('validation-error', null)
+        this.$emit('input', value)
+        return
+      }
+
+      try {
+        this.validationSchema.parse(value)
+        this.error = ''
+        this.$emit('validation-error', null)
+        this.$emit('input', value)
+      } catch (validationError) {
+        this.error = validationError.errors[0].message
+        this.$emit('validation-error', this.error)
+        this.$emit('input', '')
+      }
+    },
+  },
 }
 </script>
 
 <template>
-  <div class="form-input">
-    <label :for="id"> {{ label }}</label>
+  <div :class="'form-input'">
+    <label :for="id" :class="{ 'has-error': error }"> {{ label }}</label>
     <input
       :type="type"
       :placeholder="placeholder"
       :id="id"
       :name="id"
-      @input="$emit('input', $event.target.value)"
+      v-model="value"
+      :class="{ 'has-error': error }"
     />
-    <p class="error-msg"></p>
+    <p class="error-msg">{{ error }}</p>
   </div>
 </template>
 
@@ -59,13 +100,20 @@ export default {
   padding-inline: 8px;
 }
 
+input.has-error {
+  border-color: #e63948;
+}
+
+label.has-error {
+  color: #e63948;
+}
+
 .form-input .error-msg {
   color: #e63948;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
-  text-align: center;
   height: 1.5em;
 }
 </style>
