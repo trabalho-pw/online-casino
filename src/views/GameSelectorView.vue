@@ -35,20 +35,20 @@ export default {
         {
           title: "Caça-níquel",
           imageSrc: "src/assets/caca-niquel-svg.png",
-          description: "Um caça-níquel online é um jogo de cassino digital que simula o funcionamento das tradicionais máquinas de slot. Nele, os jogadores giram os cilindros virtuais que exibem uma variedade de símbolos, e o objetivo é alinhar esses símbolos em combinações específicas para ganhar prêmios. Os jogos geralmente oferecem gráficos atraentes, sons envolventes e bônus especiais, como rodadas grátis ou multiplicadores, para aumentar as chances de vitória. Esses jogos são acessíveis pela internet, podendo ser jogados em sites de cassino ou aplicativos de jogos, com apostas variáveis e temáticas diversificadas, que vão desde aventuras até filmes e séries.",
+          description: "Explore a emoção do cassino com nosso jogo de Caça-níquel! Gire e descubra combinações vencedoras de símbolos para ganhar prêmios incríveis. Aposte e sinta a adrenalina enquanto busca o grande prêmio!",
           gameUrl: "#",
         },
         {
           title: "Blackjack",
           imageSrc: "src/assets/blackjack-svg.png",
-          description: "Descrição do Jogo 2",
+          description: "Entre na ação do Blackjack! Desafie a sorte e sua habilidade para alcançar a melhor mão possível, com o objetivo de somar 21 pontos, sem ultrapassar. Com regras simples e grandes prêmios, o Blackjack oferece uma experiência emocionante e cheia de adrenalina.",
           gameUrl: "#",
         },
         {
           title: "Campo Minado",
           imageSrc: "src/assets/campo-minado-svg.webp",
-          description: "Descrição do Jogo 3",
-          gameUrl: "#",
+          description: "Teste sua sorte no emocionante jogo de Diamantes e Bombas! Similar ao clássico Campo Minado, seu objetivo é encontrar os diamantes espalhados pelo campo e acumular prêmios em dinheiro, a cada acerto mais diamantes e recompensas surgem, mas o risco de explosão está sempre presente.",
+          gameUrl: "/mines",
         },
       ],
     };

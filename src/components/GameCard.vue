@@ -59,7 +59,6 @@ export default {
 <style scoped>
 .game-card {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   background-color: #ddd;
   border: 1px solid #ccc;
@@ -126,6 +125,7 @@ export default {
   font-family: 'Lato', sans-serif;
   font-size: 20px;
   margin-bottom: 20px;
+  text-align: justify;
 }
 
 .modal-footer button {
@@ -135,6 +135,8 @@ export default {
   border-radius: 4px;
   padding: 10px 20px;
   cursor: pointer;
+  width: 30%;
+  font-size: 20px;
 }
 
 .modal-footer button:hover {
