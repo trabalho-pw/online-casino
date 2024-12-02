@@ -4,6 +4,8 @@ import FormInput from '../components/FormInput.vue'
 import GenericButton from '../components/GenericButton.vue'
 import router from '@/router'
 import { z } from 'zod'
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default {
   name: 'RegisterView',
@@ -28,6 +30,14 @@ export default {
     goToRegister() {
       router.push('/register')
     },
+    async login() {
+      try {
+        await signInWithEmailAndPassword(auth, this.user.email, this.user.password);
+        console.log('Login bem-sucedido!');
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
   },
 }
 </script>
@@ -53,7 +63,7 @@ export default {
           />
         </div>
         <GenericButton
-          @click="console.log(user)"
+          @click="login"
           type="button"
           :isValid="isFormValid"
           text="Entrar"

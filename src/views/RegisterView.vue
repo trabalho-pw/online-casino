@@ -4,6 +4,9 @@ import FormInput from '../components/FormInput.vue'
 import GenericButton from '../components/GenericButton.vue'
 import router from '@/router'
 import { z } from 'zod'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../firebase'
+import { getFirestore, doc, setDoc } from 'firebase/firestore'
 
 export default {
   name: 'RegisterView',
@@ -38,6 +41,30 @@ export default {
     goToLogin() {
       router.push('/')
     },
+    async register() {
+      const db = getFirestore()
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          this.newUser.email,
+          this.newUser.password,
+        )
+
+        console.log('Usuário registrado com sucesso!')
+
+        const uid = userCredential.user.uid
+
+        await setDoc(doc(db, 'users', uid), {
+          name: this.newUser.name,
+          email: this.newUser.email,
+        })
+
+        console.log('Usuário adicionado ao banco de dados!')
+      } catch (error) {
+        console.log(error.message)
+      }
+    },
   },
 }
 </script>
@@ -70,7 +97,7 @@ export default {
           />
         </div>
         <GenericButton
-          @click="console.log(newUser)"
+          @click="register"
           type="button"
           :isValid="isFormValid"
           text="criar"
