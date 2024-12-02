@@ -60,6 +60,7 @@ export default {
           email: this.newUser.email,
           xp: 0,
           coins: 1000,
+          lastDailyGift: null,
         })
 
         this.notificationStore.showNotificationMessage('Conta criada com sucesso!', 'success')

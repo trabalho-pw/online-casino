@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="game-card" @click="showModal = true">
-      <div class="title">{{ title }}</div>
+      <div>
+        <div class="title">{{ title }}</div>
+        <p class="reduced_description">{{ reduced_description }}</p>
+      </div>
       <div class="image-container">
         <img :src="imageSrc" alt="Imagem do Jogo" />
       </div>
@@ -35,6 +38,10 @@ export default {
       type: String,
       required: true,
     },
+    reduced_description: {
+      type: String,
+      required: true,
+    },
     gameUrl: {
       type: String,
       required: true,
@@ -59,25 +66,26 @@ export default {
 <style scoped>
 .game-card {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  background-color: #ddd;
+  background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
-  width: 60vw;
+  width: 50vw;
   height: 22vh;
   cursor: pointer;
 }
 
 .title {
+  font-family: "Bebas Neue", sans-serif;
   font-size: 32px;
   font-weight: bold;
+  color: #223F4A;
 }
 
 .image-container {
-  width: 27.5vh;
-  height: 17.5vh;
+  width: 25vh;
+  height: 20vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -88,6 +96,11 @@ export default {
   max-width: 100%;
   max-height: 100%;
   object-fit: cover;
+}
+
+.reduced_description{
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
 }
 
 .modal-overlay {
@@ -107,31 +120,38 @@ export default {
   background: white;
   border-radius: 8px;
   padding: 20px;
-  width: 300px;
+  width: 500px;
   text-align: center;
+  color: #223F4A;
 }
 
 .modal-header {
-  font-size: 18px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
   font-weight: bold;
   margin-bottom: 10px;
+  color: #223F4A;
 }
 
 .modal-body {
-  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
   margin-bottom: 20px;
+  text-align: justify;
 }
 
 .modal-footer button {
-  background-color: #007bff;
+  background-color: #e63948;
   color: white;
   border: none;
   border-radius: 4px;
   padding: 10px 20px;
   cursor: pointer;
+  width: 30%;
+  font-size: 20px;
 }
 
 .modal-footer button:hover {
-  background-color: #0056b3;
+  background-color: #d62839;
 }
 </style>
