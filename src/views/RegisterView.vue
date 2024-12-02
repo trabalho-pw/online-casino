@@ -51,8 +51,6 @@ export default {
           this.newUser.password,
         )
 
-        console.log('Usuário registrado com sucesso!')
-
         const uid = userCredential.user.uid
 
         await setDoc(doc(db, 'users', uid), {
@@ -60,7 +58,7 @@ export default {
           email: this.newUser.email,
         })
 
-        console.log('Usuário adicionado ao banco de dados!')
+        router.push('/')
       } catch (error) {
         console.log(error.message)
       }
