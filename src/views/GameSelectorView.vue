@@ -1,20 +1,22 @@
 <template>
-  <div class="game-cards-container">
-    <UserCard
-      :userName="'João Gamer'"
-      :userCoins="1500"
-      :levelProgress="70"
-      :userImage="'src/assets/profile.svg'"
-    />
-    <GameCard
-      v-for="(game, index) in games"
-      :key="index"
-      :title="game.title"
-      :imageSrc="game.imageSrc"
-      :description="game.description"
-      :gameUrl="game.gameUrl"
-    />
-  </div>
+  <main>
+    <div class="game-cards-container">
+      <UserCard
+        :userName="'João Gamer'"
+        :userCoins="1500"
+        :levelProgress="70"
+        :userImage="'src/assets/profile.svg'"
+      />
+      <GameCard
+        v-for="(game, index) in games"
+        :key="index"
+        :title="game.title"
+        :imageSrc="game.imageSrc"
+        :description="game.description"
+        :gameUrl="game.gameUrl"
+      />
+    </div>
+  </main>
 </template>
 
 <script>
@@ -55,6 +57,14 @@ export default {
 </script>
 
 <style scoped>
+main {
+  background: url('../assets/background-layered-peaks.svg');
+  height: 100dvh;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: bottom;
+}
+
 .game-cards-container {
   display: flex;
   flex-direction: column;

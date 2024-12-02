@@ -65,18 +65,19 @@ export default {
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
-  width: 300px;
+  width: 60vw;
+  height: 22vh;
   cursor: pointer;
 }
 
 .title {
-  font-size: 16px;
+  font-size: 32px;
   font-weight: bold;
 }
 
 .image-container {
-  width: 50px;
-  height: 50px;
+  width: 27.5vh;
+  height: 17.5vh;
   display: flex;
   justify-content: center;
   align-items: center;

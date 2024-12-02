@@ -48,14 +48,15 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 10px;
-    width: 300px;
+    width: 60vw;
+    height: 25vh;
     background-color: #f9f9f9;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   
   .user-image {
-    width: 80px;
-    height: 80px;
+    width: 22.5vh;
+    height: 22.5vh;
     border-radius: 50%;
     object-fit: cover;
     margin-right: 15px;
@@ -66,13 +67,14 @@
   }
   
   .user-name {
-    font-size: 18px;
+    font-size: 36px;
+    font-weight: bold;
     margin: 0;
     color: #333;
   }
   
   .user-coins {
-    font-size: 14px;
+    font-size: 24px;
     color: #666;
   }
   
@@ -81,7 +83,7 @@
   }
   
   .level-label {
-    font-size: 12px;
+    font-size: 20px;
     color: #666;
     margin-bottom: 4px;
   }
