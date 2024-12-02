@@ -65,18 +65,21 @@ export default {
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
-  width: 300px;
+  width: 60vw;
+  height: 22vh;
   cursor: pointer;
 }
 
 .title {
-  font-size: 16px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
   font-weight: bold;
+  color: #223F4A;
 }
 
 .image-container {
-  width: 50px;
-  height: 50px;
+  width: 27.5vh;
+  height: 17.5vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -106,23 +109,27 @@ export default {
   background: white;
   border-radius: 8px;
   padding: 20px;
-  width: 300px;
+  width: 500px;
   text-align: center;
+  color: #223F4A;
 }
 
 .modal-header {
-  font-size: 18px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
   font-weight: bold;
   margin-bottom: 10px;
+  color: #223F4A;
 }
 
 .modal-body {
-  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
   margin-bottom: 20px;
 }
 
 .modal-footer button {
-  background-color: #007bff;
+  background-color: #e63948;
   color: white;
   border: none;
   border-radius: 4px;
@@ -131,6 +138,6 @@ export default {
 }
 
 .modal-footer button:hover {
-  background-color: #0056b3;
+  background-color: #d62839;
 }
 </style>

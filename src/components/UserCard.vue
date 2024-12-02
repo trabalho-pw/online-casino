@@ -48,14 +48,15 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 10px;
-    width: 300px;
+    width: 60vw;
+    height: 25vh;
     background-color: #f9f9f9;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
   
   .user-image {
-    width: 80px;
-    height: 80px;
+    width: 22.5vh;
+    height: 22.5vh;
     border-radius: 50%;
     object-fit: cover;
     margin-right: 15px;
@@ -66,14 +67,17 @@
   }
   
   .user-name {
-    font-size: 18px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 36px;
+    font-weight: bold;
     margin: 0;
-    color: #333;
+    color: #223F4A;
   }
   
   .user-coins {
-    font-size: 14px;
-    color: #666;
+    font-family: 'Lato', sans-serif;
+    font-size: 24px;
+    color: #DEB45F;
   }
   
   .level-section {
@@ -81,9 +85,10 @@
   }
   
   .level-label {
-    font-size: 12px;
-    color: #666;
+    font-family: 'Lato', sans-serif;
+    font-size: 20px;
     margin-bottom: 4px;
+    color: #223F4A;
   }
   
   .level-bar-container {
