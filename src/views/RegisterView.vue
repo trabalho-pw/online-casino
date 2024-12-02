@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../firebase'
 import { getFirestore, doc, setDoc } from 'firebase/firestore'
+import { useNotificationStore } from '@/stores/notification'
 
 export default {
   name: 'RegisterView',
@@ -18,6 +19,7 @@ export default {
   data() {
     return {
       newUser: { name: '', email: '', password: '' },
+      notificationStore: useNotificationStore(),
       emailSchema: z.string().email('Formato de e-mail inválido'),
       passwordSchema: z
         .string()
@@ -58,8 +60,10 @@ export default {
           email: this.newUser.email,
         })
 
+        this.notificationStore.showNotificationMessage('Conta criada com sucesso!', 'success')
         router.push('/')
       } catch (error) {
+        this.notificationStore.showNotificationMessage('Algo deu errado. Tente novamente mais tarde.', 'error')
         console.log(error.message)
       }
     },
