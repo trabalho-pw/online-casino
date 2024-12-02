@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import RegisterView from '@/views/RegisterView.vue'
+import LoginView from '@/views/LoginView.vue'
 import GameSelectorView from '../views/GameSelectorView.vue'
 import MinesView from '../views/MinesView.vue'
 
@@ -8,7 +9,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'ragister',
+      name: 'login',
+      component: LoginView,
+    },
+    {
+      path: '/register',
+      name: 'register',
       component: RegisterView,
     },
     {

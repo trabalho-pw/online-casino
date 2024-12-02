@@ -14,29 +14,19 @@ export default {
   },
   data() {
     return {
-      newUser: { name: '', email: '', password: '' },
+      user: { email: '', password: '' },
       emailSchema: z.string().email('Formato de e-mail inválido'),
-      passwordSchema: z
-        .string()
-        .min(8, 'A senha deve ter no mínimo 8 caracteres.')
-        .regex(/[A-Z]/, 'A senha deve conter ao menos 1 letra maiúscula.')
-        .regex(/[a-z]/, 'A senha deve conter ao menos 1 letra minúscula.')
-        .regex(/\d/, 'A senha deve conter ao menos 1 número.')
-        .regex(/[^A-Za-z0-9]/, 'A senha deve conter ao menos 1 caractere especial.'),
-      usernameSchema: z
-        .string()
-        .min(3, 'O nome de usuário deve ter no mínimo 3 caracteres.')
-        .max(20, 'O nome de usuário deve ter no máximo 20 caracteres.'),
+      passwordSchema: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres.'),
     }
   },
   computed: {
     isFormValid() {
-      return this.newUser.name != '' && this.newUser.email != '' && this.newUser.password != ''
+      return this.user.email != '' && this.user.password != ''
     },
   },
   methods: {
-    goToLogin() {
-      router.push('/')
+    goToRegister() {
+      router.push('/register')
     },
   },
 }
@@ -44,39 +34,33 @@ export default {
 
 <template>
   <main>
-    <GenericContainer title="Criar uma Conta">
-      <form class="register-form">
+    <GenericContainer title="Fazer Login">
+      <form class="login-form">
         <div class="inputs">
-          <FormInput
-            type="text"
-            id="name"
-            label="Nome de Usuário"
-            :validationSchema="usernameSchema"
-            @input="(value) => (newUser.name = value)"
-          />
           <FormInput
             type="email"
             id="email"
             label="Email"
             :validationSchema="emailSchema"
-            @input="(value) => (newUser.email = value)"
+            @input="(value) => (user.email = value)"
           />
           <FormInput
             type="password"
             id="password"
             label="Senha"
             :validationSchema="passwordSchema"
-            @input="(value) => (newUser.password = value)"
+            @input="(value) => (user.password = value)"
           />
         </div>
         <GenericButton
-          @click="console.log(newUser)"
+          @click="console.log(user)"
           type="button"
           :isValid="isFormValid"
-          text="criar"
+          text="Entrar"
         />
-        <p class="login-msg">
-          Já possui uma conta? <button @click="goToLogin" type="button">Fazer Login</button>.
+        <p class="register-msg">
+          Ainda não possui uma conta?
+          <button @click="goToRegister" type="button">Registrar-se</button>.
         </p>
       </form>
     </GenericContainer>
@@ -95,7 +79,7 @@ main {
   justify-content: center;
 }
 
-.register-form {
+.login-form {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,11 +98,11 @@ main {
   height: 60%;
 }
 
-.login-msg {
+.register-msg {
   font-family: 'Lato', sans-serif;
 }
 
-.login-msg button {
+.register-msg button {
   border: none;
   background-color: transparent;
   cursor: pointer;
@@ -127,12 +111,12 @@ main {
   transition: all ease 0.15s;
 }
 
-.login-msg button:hover {
+.register-msg button:hover {
   color: #e63948;
 }
 
 @media screen and (min-width: 1024px) {
-  .register-form {
+  .login-form {
     justify-content: left;
     padding-top: 10%;
   }
