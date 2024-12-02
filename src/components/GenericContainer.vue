@@ -1,6 +1,10 @@
 <template>
   <div class="generic-container">
     <div class="container-header">
+      <div class="logo">
+        <img src="../assets/gold-coin.svg" alt="">
+        <h1>Logo</h1>
+      </div>
       <h1 class="title">{{ title }}</h1>
     </div>
     <div class="container-content">
@@ -44,8 +48,18 @@ export default {
   padding: 0 2em;
 }
 
-.container-header img {
-  width: 4.5em;
+.container-header .logo {
+  width: 90%;
+  font-family: "Bebas Neue", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  color: #DEB45F;
+}
+
+.container-header .logo img {
+  width: 2.25em;
 }
 
 .title {
@@ -78,6 +92,10 @@ export default {
   .generic-container {
     height: 90%;
     width: 60%;
+  }
+
+  .container-header .logo {
+    justify-content: left;
   }
 }
 
