@@ -1,5 +1,11 @@
 <template>
   <div class="game-cards-container">
+    <UserCard
+      :userName="'João Gamer'"
+      :userCoins="1500"
+      :levelProgress="70"
+      :userImage="''"
+    />
     <GameCard
       v-for="(game, index) in games"
       :key="index"
@@ -13,11 +19,13 @@
 
 <script>
 import GameCard from "@/components/GameCard.vue";
+import UserCard from "@/components/UserCard.vue";
 
 export default {
   name: "GameCardsView",
   components: {
     GameCard,
+    UserCard,
   },
   data() {
     return {
