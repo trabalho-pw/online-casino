@@ -4,17 +4,22 @@
             <MinesGame/>
         </GenericContainer>
     </main>
+    <footer>
+        <Rodape/>
+    </footer>
     
 </template>
 <script>
 import MinesGame from '../components/MinesGame.vue';
 import GenericContainer from '../components/GenericContainer.vue';
+import Rodape from '@/components/Rodape.vue';
 
 export default{
     name: "MinesView",
     components: {
         MinesGame,
         GenericContainer,
+        Rodape,
     },
     
 };

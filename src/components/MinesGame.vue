@@ -1,7 +1,7 @@
 <template>
     <div class="mines-container">
         <div class="cash">
-            <p>{{ cash }}</p>
+            <p>Saldo: R${{ cash }}</p>
         </div>
         <div class="game-board">
             <div 
@@ -174,10 +174,12 @@ export default {
 
 .cash {
     width: 40%;
+    font-family: 'Lato', sans-serif;
 }
 
 .cash p {
     width: 100%;
+    text-align: center;
 }
 
 .status{
@@ -196,6 +198,7 @@ border-radius: 10px;
 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
 font-size: 1.5rem;
 padding: 7px;
+
 }
 .bet-input {
 margin-top: 20px;
