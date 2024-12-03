@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="cash">
-            <p>{{ cash }}</p>
+            <p>SALDO: R${{ cash }}</p>
         </div>
         <div class="game-board">
             <div 
@@ -136,6 +136,13 @@ mounted() {
 </script>
 
 <style scoped>
+.cash{
+    font-family: "Bebas Neue";
+    font-size: 1.5rem;
+    gap: 10px;
+    display: flex;
+    justify-content: center;
+}
 .status{
 font-family: "Bebas Neue";
 font-size: 1.5rem;
@@ -151,6 +158,7 @@ border-radius: 10px;
 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
 font-size: 1.5rem;
 padding: 7px;
+
 }
 .bet-input {
 margin-top: 20px;
@@ -177,7 +185,7 @@ grid-template-columns: repeat(5, 50px);
 grid-template-rows: repeat(5, 50px);
 gap: 10px;
 justify-content: center;
-
+margin-top: 20px;
 
 }
 
