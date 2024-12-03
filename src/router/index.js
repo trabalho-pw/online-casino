@@ -6,6 +6,7 @@ import LoginView from '@/views/LoginView.vue'
 import GameSelectorView from '../views/GameSelectorView.vue'
 import MinesView from '../views/MinesView.vue'
 import BlackjackView from '@/views/BlackjackView.vue';
+import CacaNiquelView from '@/views/CacaNiquelView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,7 +45,7 @@ const router = createRouter({
     {
       path: '/caca-niquel',
       name: 'caca-niquel',
-      component: () => import('@views/CacaNiquelView.vue'),
+      component: CacaNiquelView,
     },
 
   ],
