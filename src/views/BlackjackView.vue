@@ -30,7 +30,10 @@
         />
   
         <!-- Botão para reiniciar o jogo -->
-        <button v-if="jogoFinalizado" @click="reiniciarJogo">Reiniciar Jogo</button>
+         <div v-if="jogoFinalizado">
+           <button  @click="reiniciarJogo">Reiniciar Jogo</button>
+           <button  @click="irParaHome">Sair do jogo</button>
+         </div>
       </div>
   
     </div>
@@ -46,6 +49,7 @@
   import ControlesDeJogo from '../components/ControlesDeJogo.vue';
   import approdape from '../components/Rodape.vue'; // Importa o Footer
   import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import router from '@/router';
 
   
   export default {
@@ -219,6 +223,9 @@
         this.dinheiro = this.dinheiroFinal;
         this.iniciarJogo();
       },
+      irParaHome() {
+        router.push('/'+this.userId)
+      }
     },
     async created() {
       await this.fetchUserData();
@@ -294,7 +301,5 @@ button:disabled {
   margin: 10px 0;
   font-weight: bold;
 }
-
-
-  </style>
+</style>
   
