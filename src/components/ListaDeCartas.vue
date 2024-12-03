@@ -3,7 +3,6 @@
     <h3>{{ titulo }}</h3>
     <div class="cartas">
       <div v-for="(carta, index) in cartas" :key="index" class="carta">
-        <!-- Utilizando apenas o emoji da carta sem o emoji do naipe -->
         <span class="emoji-carta" :title="`${carta.valor} de ${carta.naipe}`">
           {{ obterEmojiDaCarta(carta) }}
         </span>
@@ -19,7 +18,7 @@ export default {
     titulo: String
   },
   methods: {
-    // Método para converter carta para emoji sem o emoji do naipe
+    // Método para converter carta para emoji sem
     obterEmojiDaCarta(carta) {
       const emojis = {
         "A": "🂡", "2": "🂢", "3": "🂣", "4": "🂤", "5": "🂥", "6": "🂦", "7": "🂧", "8": "🂨", "9": "🂩", "10": "🂪",
