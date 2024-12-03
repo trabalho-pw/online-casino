@@ -199,6 +199,10 @@
   min-height: 100vh;
   background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro */
   font-family: 'Arial', sans-serif;
+  background: url('../assets/background-layered-peaks.svg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: bottom;
 }
 
 .jogo-container {
@@ -208,10 +212,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   color: white;
   text-align: center;
-  background: url('../assets/background-layered-peaks.svg');
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: bottom;
   width: 80vw; /* Largura do contêiner ajustada */
   max-width: 800px; /* Limita a largura máxima */
   min-width: 400px; /* Garante uma largura mínima para telas pequenas */
