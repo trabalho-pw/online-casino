@@ -44,7 +44,7 @@
   import ListaDeCartas from '../components/ListaDeCartas.vue';
   import Placar from '../components/Placar.vue';
   import ControlesDeJogo from '../components/ControlesDeJogo.vue';
-  import approdape from '../components/rodape.vue'; // Importa o Footer
+  import approdape from '../components/Rodape.vue'; // Importa o Footer
   
   export default {
     components: {

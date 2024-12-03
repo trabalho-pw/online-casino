@@ -66,8 +66,12 @@ export default {
         this.notificationStore.showNotificationMessage('Conta criada com sucesso!', 'success')
         router.push('/')
       } catch (error) {
-        this.notificationStore.showNotificationMessage('Algo deu errado. Tente novamente mais tarde.', 'error')
-        console.log(error.message)
+        if(error.code == "auth/email-already-in-use") {
+          this.notificationStore.showNotificationMessage('E-mail já está em uso. Use outro e-mail ou faça login.', 'error')
+        }
+        else {
+          this.notificationStore.showNotificationMessage('Algo deu errado. Tente novamente mais tarde.', 'error')
+        }
       }
     },
   },
@@ -76,7 +80,7 @@ export default {
 
 <template>
   <main>
-    <GenericContainer title="Criar uma Conta">
+    <GenericContainer title="Criar uma Conta" :show-logo="true">
       <form class="register-form">
         <div class="inputs">
           <FormInput

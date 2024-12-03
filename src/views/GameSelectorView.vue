@@ -3,7 +3,7 @@
   <main>
     <div class="game-cards-container">
       <UserCard
-        :userName="userData?.name || 'Usuário Anônimo'"
+        :userName="userData?.name || 'Usuário'"
         :userCoins="userData?.coins || 0"
         :xp="userData?.xp || 0"
         :userImage="userData?.profileImage || 'src/assets/profile.webp'"
@@ -18,6 +18,9 @@
         :gameUrl="game.gameUrl"
       />
     </div>
+    <footer>
+      <Rodape/>
+    </footer>
   </main>
 </template>
 
@@ -28,6 +31,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import DailyGiftModal from "@/components/DailyGiftModal.vue";
 import { auth } from '../firebase';
+import Rodape from '../components/Rodape.vue'; 
+
 
 const db = getFirestore()
 
@@ -37,6 +42,7 @@ export default {
     GameCard,
     UserCard,
     DailyGiftModal,
+    Rodape,
   },
   data() {
     return {
