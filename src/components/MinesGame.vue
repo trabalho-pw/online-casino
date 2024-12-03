@@ -35,11 +35,13 @@
 
 <script>
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import { useLoadingStore } from '@/stores/loading'
 
 export default {
     name: "MinesGame",
     data() {
         return {
+            loadinStore: useLoadingStore(),
             board: [],
             mines: [],
             isGameWin: false,
@@ -62,6 +64,8 @@ export default {
     },
     methods: {
         async fetchUserData() {
+            this.loadinStore.setLoading(true)
+            
             const db = getFirestore();
             const userDoc = doc(db, "users", this.userID);
             const userSnapshot = await getDoc(userDoc);
@@ -71,6 +75,8 @@ export default {
             } else {
                 alert("Usuário não encontrado!");
             }
+
+            this.loadinStore.setLoading(false)
         },
         async updateUserData() {
             const db = getFirestore();

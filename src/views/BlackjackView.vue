@@ -49,7 +49,8 @@
   import ControlesDeJogo from '../components/ControlesDeJogo.vue';
   import approdape from '../components/Rodape.vue'; // Importa o Footer
   import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
-import router from '@/router';
+  import router from '@/router';
+  import { useLoadingStore } from '@/stores/loading'
 
   
   export default {
@@ -61,6 +62,7 @@ import router from '@/router';
     },
     data() {
       return {
+        loadinStore: useLoadingStore(),
         naipes: ['Corações', 'Paus', 'Diamantes', 'Espadas'],
         valores: ['A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2'],
         baralho: [],
@@ -68,8 +70,8 @@ import router from '@/router';
         cartasJogador: [],
         pontuacaoDealer: 0,
         pontuacaoJogador: 0,
-        dinheiro: 1500, // Dinheiro inicial
-        dinheiroFinal: 1500, // Armazena o valor final do dinheiro após o término do jogo
+        dinheiro: 0, // Dinheiro inicial
+        dinheiroFinal: 0, // Armazena o valor final do dinheiro após o término do jogo
         jogoIniciado: false,
         jogoFinalizado: false,
         jogadorVenceu: false,
@@ -79,6 +81,8 @@ import router from '@/router';
     },
     methods: {
         async fetchUserData() {
+        this.loadinStore.setLoading(true)
+
         const db = getFirestore();
         const userDoc = doc(db, "users", this.userId);
         const userSnapshot = await getDoc(userDoc);
@@ -91,6 +95,8 @@ import router from '@/router';
         } else {
           console.error("Usuário não encontrado no Firestore");
         }
+
+        this.loadinStore.setLoading(false)
       },
       async updateUserData() {
         const db = getFirestore();

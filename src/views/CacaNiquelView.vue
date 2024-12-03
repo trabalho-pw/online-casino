@@ -51,6 +51,7 @@
       </div>
     </GenericContainer>
   </div>
+  <Rodape/>
 </template>
 
 
@@ -58,15 +59,21 @@
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import GenericContainer from '@/components/GenericContainer.vue';
 import router from "@/router";
+import Rodape from '../components/Rodape.vue'; // Importa o Footer
+import { useLoadingStore } from '@/stores/loading'
+
+
 import GenericButton from "@/components/GenericButton.vue";
 
 export default {
   components: {
     GenericContainer,
     GenericButton,
+    Rodape,
   },
   data() {
     return {
+      loadinStore: useLoadingStore(),
       userId: this.$route.params.userID,
       balance: 0,
       resultMessage: '',
@@ -88,6 +95,8 @@ export default {
   },
   methods: {
     async fetchUserData() {
+      this.loadinStore.setLoading(true)
+
       const db = getFirestore();
       const userDoc = doc(db, "users", this.userId);
       const userSnapshot = await getDoc(userDoc);
@@ -98,6 +107,8 @@ export default {
       } else {
         console.error("Usuário não encontrado no Firestore");
       }
+
+      this.loadinStore.setLoading(false)
     },
     async updateUserData() {
       const db = getFirestore();

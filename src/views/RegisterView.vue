@@ -8,6 +8,8 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../firebase'
 import { getFirestore, doc, setDoc } from 'firebase/firestore'
 import { useNotificationStore } from '@/stores/notification'
+import { useLoadingStore } from '@/stores/loading'
+
 
 export default {
   name: 'RegisterView',
@@ -20,6 +22,7 @@ export default {
     return {
       newUser: { name: '', email: '', password: '' },
       notificationStore: useNotificationStore(),
+      loadinStore: useLoadingStore(),
       emailSchema: z.string().email('Formato de e-mail inválido'),
       passwordSchema: z
         .string()
@@ -45,7 +48,7 @@ export default {
     },
     async register() {
       const db = getFirestore()
-
+      this.loadinStore.setLoading(true)
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -72,6 +75,8 @@ export default {
         else {
           this.notificationStore.showNotificationMessage('Algo deu errado. Tente novamente mais tarde.', 'error')
         }
+      } finally {
+        this.loadinStore.setLoading(false)
       }
     },
   },

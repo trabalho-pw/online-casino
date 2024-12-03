@@ -7,6 +7,8 @@ import { z } from 'zod'
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNotificationStore } from '@/stores/notification'
+import { useLoadingStore } from '@/stores/loading'
+
 
 export default {
   name: 'RegisterView',
@@ -18,6 +20,7 @@ export default {
   data() {
     return {
       notificationStore: useNotificationStore(),
+      loadinStore: useLoadingStore(),
       user: { email: '', password: '' },
       emailSchema: z.string().email('Formato de e-mail inválido'),
       passwordSchema: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres.'),
@@ -33,6 +36,7 @@ export default {
       router.push('/register')
     },
     async login() {
+      this.loadinStore.setLoading(true)
       try {
         const userCredential = await signInWithEmailAndPassword(auth, this.user.email, this.user.password);
 
@@ -46,6 +50,8 @@ export default {
         else {
           this.notificationStore.showNotificationMessage('Algo deu errado. Tente novamente mais tarde.', 'error')
         }
+      }  finally {
+        this.loadinStore.setLoading(false)
       }
     }
   },

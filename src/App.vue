@@ -1,13 +1,17 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import { useNotificationStore } from '@/stores/notification'
-import NotificationPopup from '@/components/NotificationPopup.vue'
+import { useLoadingStore } from '@/stores/loading'
+import NotificationPopup from './components/NotificationPopup.vue';
+import LoadingPage from './components/LoadingPage.vue';
 
 const notificationStore = useNotificationStore()
+const loadingStore = useLoadingStore()
 </script>
 
 <template>
   <div class="main">
+    <LoadingPage :loading="loadingStore.isLoading" />
     <NotificationPopup
     v-if="notificationStore.showNotification"
     :type="notificationStore.notificationType"

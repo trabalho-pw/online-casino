@@ -29,8 +29,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import DailyGiftModal from "@/components/DailyGiftModal.vue";
 import { auth } from '../firebase';
-import Rodape from '../components/Rodape.vue'; 
-
+import Rodape from '../components/Rodape.vue';
+import { useLoadingStore } from '@/stores/loading'
 
 const db = getFirestore()
 
@@ -44,6 +44,7 @@ export default {
   },
   data() {
     return {
+      loadinStore: useLoadingStore(),
       userData: null,
       showDailyGiftModal: false,
       uid: '',
@@ -75,6 +76,7 @@ export default {
   mounted() {
   onAuthStateChanged(auth, async (user) => {
     if (user) {
+      this.loadinStore.setLoading(true)
       try {
         const uid = user.uid;
         this.uid = uid;
@@ -94,6 +96,8 @@ export default {
         }
       } catch (error) {
         console.error('Erro ao buscar os dados do usuário:', error);
+      }   finally {
+        this.loadinStore.setLoading(false)
       }
     } else {
       console.log('Nenhum usuário está logado');
