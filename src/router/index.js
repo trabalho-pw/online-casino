@@ -33,7 +33,7 @@ const router = createRouter({
       component: GameSelectorView, 
     },
     {
-      path: '/mines',
+      path: '/mines/:userID',
       name: 'mines',
       component: MinesView,
     },
@@ -47,7 +47,6 @@ const router = createRouter({
       name: 'caca-niquel',
       component: CacaNiquelView,
     },
-
   ],
 })
 

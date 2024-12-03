@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="mines-container">
         <div class="cash">
             <p>{{ cash }}</p>
         </div>
@@ -9,139 +9,184 @@
                 :key="index" 
                 class="square" 
                 :class="{ clicked: square.clicked, mine: isGameOver && square.mine }"
-                @click=" isBetPlaced && handleClick(index)"
+                @click="isBetPlaced && handleClick(index)"
             >
                 <i v-if="square.clicked" :class="square.icon"></i>
             </div>
         </div>
         <div class="bet-input">
-        <input 
-            type="number" 
-            v-model.number="bet" 
-            placeholder="Insira sua aposta" 
-        />
-        <button :disabled="!isBetValid" @click="placeBet">Começar o Jogo</button>
-        
+            <input 
+                type="number" 
+                v-model.number="bet" 
+                placeholder="Insira sua aposta" 
+            />
+            <button :disabled="!isBetValid" @click="placeBet">Começar o Jogo</button>
         </div>
         <div v-if="isBetPlaced" class="status">
             <p>MULTIPLICADOR: {{ mult }}X</p>
-            <button :disabled="!isBetValid" @click="gameWin">RETIRAR: R${{win}}</button>
+            <button :disabled="!isBetValid" @click="gameWin">RETIRAR: R${{ win }}</button>
         </div>
-        
+        <div v-if="isGameEnd" class="game-end">
+            <h2>{{ isGameWin ? "Parabéns! Você venceu!" : "Que pena! Você perdeu." }}</h2>
+            <button @click="goToHome">Voltar ao início</button>
+        </div>
     </div>
 </template>
 
 <script>
-export default{
-name: "MinesGame",
-data() {
-    return {
-        board: [],         
-        mines: [],
-        isGameWin: false,         
-        isGameOver: false, 
-        mult: 1.0,          
-        totalSquares: 25,  
-        bet: null,         
-        isBetPlaced: false,
-        win: 0,
-        cash: 1000,
-    };
-},
-computed:{
-    isBetValid(){
-        return this.bet != null
-    },
-},
-methods: {
-    
-    startGame() {
-        this.isGameWin = false;
-        this.isGameOver = false;
-        this.board = [];
-        this.mines = [];
-        this.mult = 1.0;
-        this.win = this.bet;
-        
-        
-        for (let i = 0; i < this.totalSquares; i++) {
-            this.board.push({ clicked: false, mine: false, icon: "" });
-        }
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 
-        
-        this.placeMines();
+export default {
+    name: "MinesGame",
+    data() {
+        return {
+            board: [],
+            mines: [],
+            isGameWin: false,
+            isGameOver: false,
+            isGameEnd: false,
+            mult: 1.0,
+            totalSquares: 25,
+            bet: null,
+            isBetPlaced: false,
+            win: 0,
+            cash: 0,
+            userData: null,
+            userID: null,
+        };
     },
-    placeMines() {
-        let mineCount = 5; 
-        while (this.mines.length < mineCount) {
-            const randomIndex = Math.floor(Math.random() * this.totalSquares);
-            if (!this.mines.includes(randomIndex)) {
-                this.mines.push(randomIndex);
+    computed: {
+        isBetValid() {
+            return this.bet != null && this.bet <= this.cash && this.bet > 0;
+        },
+    },
+    methods: {
+        async fetchUserData() {
+            const db = getFirestore();
+            const userDoc = doc(db, "users", this.userID);
+            const userSnapshot = await getDoc(userDoc);
+            if (userSnapshot.exists()) {
+                this.userData = userSnapshot.data();
+                this.cash = this.userData.coins;
+            } else {
+                alert("Usuário não encontrado!");
             }
-        }
-
-        
-            this.mines.forEach(index => {
-            this.board[index].mine = true;
+        },
+        async updateUserData() {
+            const db = getFirestore();
+            const userDoc = doc(db, "users", this.userID);
+            await updateDoc(userDoc, {
+                coins: this.cash,
+                xp: this.userData.xp + (this.isGameWin ? 10 : 0),
+                lastDailyGift: this.userData.lastDailyGift,
             });
-    },
-    placeBet() {
-        this.cash -= this.bet;
-        if (this.bet > 0) {
+        },
+        startGame() {
+            this.isGameWin = false;
+            this.isGameOver = false;
+            this.isGameEnd = false;
+            this.board = [];
+            this.mines = [];
+            this.mult = 1.0;
+            this.win = this.bet;
+
+            for (let i = 0; i < this.totalSquares; i++) {
+                this.board.push({ clicked: false, mine: false, icon: "" });
+            }
+
+            this.placeMines();
+        },
+        placeMines() {
+            let mineCount = 5;
+            while (this.mines.length < mineCount) {
+                const randomIndex = Math.floor(Math.random() * this.totalSquares);
+                if (!this.mines.includes(randomIndex)) {
+                    this.mines.push(randomIndex);
+                }
+            }
+
+            this.mines.forEach(index => {
+                this.board[index].mine = true;
+            });
+        },
+        placeBet() {
+            this.cash -= this.bet;
             this.isBetPlaced = true;
             this.startGame();
-        } else {
-            alert("Por favor, insira um valor de aposta válido.");
-        }
-    },
-    handleClick(index) {
-        if (this.isGameWin || this.isGameOver || this.board[index].clicked) return;
+        },
+        handleClick(index) {
+            if (this.isGameWin || this.isGameOver || this.board[index].clicked) return;
 
-        const square = this.board[index];
-        square.clicked = true;
+            const square = this.board[index];
+            square.clicked = true;
 
-        if (square.mine) {
-            this.gameOver();
-        } else {
-            this.mult += 0.5;
-            square.icon = "fa fa-gem";
-            this.win = this.bet * this.mult;
-            if (this.mult >= 3.5) {
-                this.isGameWin = true;
+            if (square.mine) {
+                this.gameOver();
+            } else {
+                this.mult += 0.5;
+                square.icon = "fa fa-gem";
+                this.win = this.bet * this.mult;
+                if (this.mult >= 3.5) {
+                    this.gameWin();
+                }
             }
-        }
-    },
-    gameOver() {
-        this.isGameOver = true;
-        this.bet = null;
+        },
+        gameOver() {
+            this.isGameOver = true;
+            this.isGameEnd = true;
+            this.bet = null;
 
-        this.mines.forEach(index => {
-            const mineSquare = this.board[index];
-            mineSquare.icon = "fa fa-bomb"; 
-            mineSquare.clicked = true;
-        });
+            this.mines.forEach(index => {
+                const mineSquare = this.board[index];
+                mineSquare.icon = "fa fa-bomb";
+                mineSquare.clicked = true;
+            });
+
+            this.updateUserData();
+        },
+        gameWin() {
+            this.cash += this.win;
+            this.isGameWin = true;
+            this.isGameEnd = true;
+            this.bet = null;
+
+            this.updateUserData();
+        },
+        goToHome() {
+            this.$router.push('/'+this.userID);
+        },
     },
-    gameWin() {
-        this.cash += this.win; 
-        this.isGameWin = true;
-        this.bet = null;
-        
-    }
-},
-mounted() {
-    this.startGame();
-}
+    async mounted() {
+        this.userID = this.$route.params.userID;
+        await this.fetchUserData();
+    },
 };
-
 </script>
 
+
 <style scoped>
+.mines-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+}
+
+.cash {
+    width: 40%;
+}
+
+.cash p {
+    width: 100%;
+}
+
 .status{
 font-family: "Bebas Neue";
 font-size: 1.5rem;
 gap: 10px;
 display: flex;
 justify-content: center;
+width: 100%;
 
 }
 p{
@@ -158,6 +203,7 @@ margin-bottom: 20px;
 display: flex;
 justify-content: center;
 gap: 10px;
+width: 100%;
 }
 
 input {
@@ -177,8 +223,6 @@ grid-template-columns: repeat(5, 50px);
 grid-template-rows: repeat(5, 50px);
 gap: 10px;
 justify-content: center;
-
-
 }
 
 .square {
@@ -244,6 +288,14 @@ background: #989898;
 transition: none;
 scale: 1;
 cursor: default;
+}
+
+.game-end {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Lato', sans-serif;
 }
 
 </style>

@@ -15,7 +15,7 @@
         :imageSrc="game.imageSrc"
         :description="game.description"
         :reduced_description="game.reduced_description"
-        :gameUrl="game.gameUrl"
+        :gameUrl="game.gameUrl+'/'+uid"
       />
     </div>
     <Rodape/>
