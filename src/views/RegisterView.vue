@@ -76,7 +76,7 @@ export default {
 
 <template>
   <main>
-    <GenericContainer title="Criar uma Conta">
+    <GenericContainer title="Criar uma Conta" :show-logo="true">
       <form class="register-form">
         <div class="inputs">
           <FormInput

@@ -48,7 +48,7 @@ export default {
 
 <template>
   <main>
-    <GenericContainer title="Fazer Login">
+    <GenericContainer title="Fazer Login" :show-logo="true">
       <form class="login-form">
         <div class="inputs">
           <FormInput

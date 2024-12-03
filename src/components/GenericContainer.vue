@@ -1,7 +1,7 @@
 <template>
   <div class="generic-container">
     <div class="container-header">
-      <div class="logo">
+      <div v-show="showLogo" class="logo">
         <img src="../assets/gold-coin.svg" alt="">
         <h1>Logo</h1>
       </div>
@@ -21,6 +21,10 @@ export default {
       type: String,
       default: '',
     },
+    showLogo: {
+      type: Boolean,
+      default: false,
+    }
   },
 }
 </script>
