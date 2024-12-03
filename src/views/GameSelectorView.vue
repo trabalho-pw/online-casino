@@ -18,8 +18,8 @@
         :gameUrl="game.gameUrl+'/'+uid"
       />
     </div>
-    <Rodape/>
   </main>
+  <Rodape/>
 </template>
 
 <script>
