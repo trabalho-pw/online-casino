@@ -1,35 +1,34 @@
 <template>
-    <div class="mines-container">
-        <div class="cash">
-            <p>Saldo: R${{ cash }}</p>
+    <div class="cash">
+        <p>Saldo: R${{ cash }}</p>
+    </div>
+    <div class="game-board">
+        <div 
+            v-for="(square, index) in board" 
+            :key="index" 
+            class="square" 
+            :class="{ clicked: square.clicked, mine: isGameOver && square.mine }"
+            @click="isBetPlaced && handleClick(index)"
+        >
+            <i v-if="square.clicked" :class="square.icon"></i>
         </div>
-        <div class="game-board">
-            <div 
-                v-for="(square, index) in board" 
-                :key="index" 
-                class="square" 
-                :class="{ clicked: square.clicked, mine: isGameOver && square.mine }"
-                @click="isBetPlaced && handleClick(index)"
-            >
-                <i v-if="square.clicked" :class="square.icon"></i>
-            </div>
-        </div>
-        <div class="bet-input">
-            <input 
-                type="number" 
-                v-model.number="bet" 
-                placeholder="Insira sua aposta" 
-            />
-            <button :disabled="!isBetValid" @click="placeBet">Começar o Jogo</button>
-        </div>
-        <div v-if="isBetPlaced" class="status">
-            <p>MULTIPLICADOR: {{ mult }}X</p>
-            <button :disabled="!isBetValid" @click="gameWin">RETIRAR: R${{ win }}</button>
-        </div>
-        <div v-if="isGameEnd" class="game-end">
-            <h2>{{ isGameWin ? "Parabéns! Você venceu!" : "Que pena! Você perdeu." }}</h2>
-            <button @click="goToHome">Voltar ao início</button>
-        </div>
+    </div>
+    <div class="bet-input">
+        <input 
+            type="number" 
+            v-model.number="bet" 
+            placeholder="Insira sua aposta" 
+        />
+        <button :disabled="!isBetValid || isGameInProgress" @click="placeBet">Começar o Jogo</button>
+    </div>
+    <div v-if="isBetPlaced" class="status">
+        <p>MULTIPLICADOR: {{ mult }}X</p>
+        <button :disabled="!isBetValid" @click="gameWin">RETIRAR: R${{ win }}</button>
+    </div>
+    <div v-if="isGameEnd" class="game-end">
+        <h2 :class="{ 'win-message': isGameWin, 'lose-message': !isGameWin }">
+            {{ isGameWin ? "Parabéns! Você venceu!" : "Que pena! Você perdeu" }}</h2>
+        <button @click="goToHome">Voltar ao início</button>
     </div>
 </template>
 
@@ -38,154 +37,151 @@ import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useLoadingStore } from '@/stores/loading'
 
 export default {
-    name: "MinesGame",
-    data() {
-        return {
-            loadinStore: useLoadingStore(),
-            board: [],
-            mines: [],
-            isGameWin: false,
-            isGameOver: false,
-            isGameEnd: false,
-            mult: 1.0,
-            totalSquares: 25,
-            bet: null,
-            isBetPlaced: false,
-            win: 0,
-            cash: 0,
-            userData: null,
-            userID: null,
-        };
+name: "MinesGame",
+data() {
+    return {
+        loadinStore: useLoadingStore(),
+        board: [],
+        mines: [],
+        isGameWin: false,
+        isGameOver: false,
+        isGameEnd: false,
+        isGameInProgress: false,
+        mult: 1.0,
+        totalSquares: 25,
+        bet: null,
+        isBetPlaced: false,
+        win: 0,
+        cash: 0,
+        userData: null,
+        userID: null,
+    };
+},
+computed: {
+    isBetValid() {
+        return this.bet != null && this.bet <= this.cash && this.bet > 0;
     },
-    computed: {
-        isBetValid() {
-            return this.bet != null && this.bet <= this.cash && this.bet > 0;
-        },
+},
+methods: {
+    async fetchUserData() {
+        this.loadinStore.setLoading(true)
+        
+        const db = getFirestore();
+        const userDoc = doc(db, "users", this.userID);
+        const userSnapshot = await getDoc(userDoc);
+        if (userSnapshot.exists()) {
+            this.userData = userSnapshot.data();
+            this.cash = this.userData.coins;
+        } else {
+            alert("Usuário não encontrado!");
+        }
+
+        this.loadinStore.setLoading(false)
     },
-    methods: {
-        async fetchUserData() {
-            this.loadinStore.setLoading(true)
-            
-            const db = getFirestore();
-            const userDoc = doc(db, "users", this.userID);
-            const userSnapshot = await getDoc(userDoc);
-            if (userSnapshot.exists()) {
-                this.userData = userSnapshot.data();
-                this.cash = this.userData.coins;
-            } else {
-                alert("Usuário não encontrado!");
-            }
-
-            this.loadinStore.setLoading(false)
-        },
-        async updateUserData() {
-            const db = getFirestore();
-            const userDoc = doc(db, "users", this.userID);
-            await updateDoc(userDoc, {
-                coins: this.cash,
-                xp: this.userData.xp + (this.isGameWin ? 10 : 0),
-                lastDailyGift: this.userData.lastDailyGift,
-            });
-        },
-        startGame() {
-            this.isGameWin = false;
-            this.isGameOver = false;
-            this.isGameEnd = false;
-            this.board = [];
-            this.mines = [];
-            this.mult = 1.0;
-            this.win = this.bet;
-
-            for (let i = 0; i < this.totalSquares; i++) {
-                this.board.push({ clicked: false, mine: false, icon: "" });
-            }
-
-            this.placeMines();
-        },
-        placeMines() {
-            let mineCount = 5;
-            while (this.mines.length < mineCount) {
-                const randomIndex = Math.floor(Math.random() * this.totalSquares);
-                if (!this.mines.includes(randomIndex)) {
-                    this.mines.push(randomIndex);
-                }
-            }
-
-            this.mines.forEach(index => {
-                this.board[index].mine = true;
-            });
-        },
-        placeBet() {
-            this.cash -= this.bet;
-            this.isBetPlaced = true;
-            this.startGame();
-        },
-        handleClick(index) {
-            if (this.isGameWin || this.isGameOver || this.board[index].clicked) return;
-
-            const square = this.board[index];
-            square.clicked = true;
-
-            if (square.mine) {
-                this.gameOver();
-            } else {
-                this.mult += 0.5;
-                square.icon = "fa fa-gem";
-                this.win = this.bet * this.mult;
-                if (this.mult >= 3.5) {
-                    this.gameWin();
-                }
-            }
-        },
-        gameOver() {
-            this.isGameOver = true;
-            this.isGameEnd = true;
-            this.bet = null;
-
-            this.mines.forEach(index => {
-                const mineSquare = this.board[index];
-                mineSquare.icon = "fa fa-bomb";
-                mineSquare.clicked = true;
-            });
-
-            this.updateUserData();
-        },
-        gameWin() {
-            this.cash += this.win;
-            this.isGameWin = true;
-            this.isGameEnd = true;
-            this.bet = null;
-
-            this.updateUserData();
-        },
-        goToHome() {
-            this.$router.push('/'+this.userID);
-        },
+    async updateUserData() {
+        const db = getFirestore();
+        const userDoc = doc(db, "users", this.userID);
+        await updateDoc(userDoc, {
+            coins: this.cash,
+            xp: this.userData.xp + (this.isGameWin ? 10 : 0),
+            lastDailyGift: this.userData.lastDailyGift,
+        });
     },
-    async mounted() {
-        this.userID = this.$route.params.userID;
-        await this.fetchUserData();
+    startGame() {
+        this.isGameWin = false;
+        this.isGameOver = false;
+        this.isGameEnd = false;
+        this.board = [];
+        this.mines = [];
+        this.mult = 1.0;
+        this.win = this.bet;
+
+        for (let i = 0; i < this.totalSquares; i++) {
+            this.board.push({ clicked: false, mine: false, icon: "" });
+        }
+
+        this.placeMines();
     },
+    placeMines() {
+        let mineCount = 5;
+        while (this.mines.length < mineCount) {
+            const randomIndex = Math.floor(Math.random() * this.totalSquares);
+            if (!this.mines.includes(randomIndex)) {
+                this.mines.push(randomIndex);
+            }
+        }
+
+        this.mines.forEach(index => {
+            this.board[index].mine = true;
+        });
+    },
+    placeBet() {
+        this.cash -= this.bet;
+        this.isBetPlaced = true;
+        this.isGameInProgress = true;
+        this.startGame();
+    },
+    handleClick(index) {
+        if (this.isGameWin || this.isGameOver || this.board[index].clicked) return;
+
+        const square = this.board[index];
+        square.clicked = true;
+
+        if (square.mine) {
+            this.gameOver();
+        } else {
+            this.mult += 0.5;
+            square.icon = "fa fa-gem";
+            this.win = this.bet * this.mult;
+            if (this.mult >= 3.5) {
+                this.gameWin();
+            }
+        }
+    },
+    gameOver() {
+        this.isGameOver = true;
+        this.isGameEnd = true;
+        this.isGameInProgress = false;
+        this.bet = null;
+
+        this.mines.forEach(index => {
+            const mineSquare = this.board[index];
+            mineSquare.icon = "fa fa-bomb";
+            mineSquare.clicked = true;
+        });
+
+        this.updateUserData();
+    },
+    gameWin() {
+        this.cash += this.win;
+        this.isGameWin = true;
+        this.isGameEnd = true;
+        this.isGameInProgress = false;
+        this.bet = null;
+
+        this.updateUserData();
+    },
+    goToHome() {
+        this.$router.push('/'+this.userID);
+    },
+},
+async mounted() {
+    this.userID = this.$route.params.userID;
+    await this.fetchUserData();
+    this.startGame();
+},
 };
 </script>
 
 
 <style scoped>
-.mines-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1em;
-}
-
 .cash {
-    width: 40%;
-    font-family: 'Lato', sans-serif;
-}
-
-.cash p {
-    width: 100%;
-    text-align: center;
+font-family: "Bebas Neue";
+font-size: 1.5rem;
+gap: 10px;
+display: flex;
+justify-content: center;
+margin-bottom: 19px;
 }
 
 .status{
@@ -207,8 +203,8 @@ padding: 7px;
 
 }
 .bet-input {
-margin-top: 20px;
-margin-bottom: 20px;
+margin-top: 15px;
+margin-bottom: 15px;
 display: flex;
 justify-content: center;
 gap: 10px;
@@ -300,11 +296,21 @@ cursor: default;
 }
 
 .game-end {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Lato', sans-serif;
+width: 100%;
+display: flex;
+flex-direction: column;
+align-items: center;
+font-family:  "Bebas Neue", sans-serif;
+font-size: 1.1rem;
+}
+.win-message {
+color: green;
+font-weight: bold;
+}
+
+.lose-message {
+color: red;
+font-weight: bold;
 }
 
 </style>

@@ -1,8 +1,8 @@
 <template>
     <main>
-        <GenericContainer title="CAMPO MINADO">
+        <MinesContainer title="CAMPO MINADO">
             <MinesGame/>
-        </GenericContainer>
+        </MinesContainer>
     </main>
     <footer>
         <Rodape/>
@@ -11,14 +11,14 @@
 </template>
 <script>
 import MinesGame from '../components/MinesGame.vue';
-import GenericContainer from '../components/GenericContainer.vue';
 import Rodape from '@/components/Rodape.vue';
+import MinesContainer from '@/components/MinesContainer.vue';
 
 export default{
     name: "MinesView",
     components: {
         MinesGame,
-        GenericContainer,
+        MinesContainer,
         Rodape,
     },
     
@@ -36,4 +36,5 @@ main {
   align-items: center;
   justify-content: center;  
 }
+
 </style>
