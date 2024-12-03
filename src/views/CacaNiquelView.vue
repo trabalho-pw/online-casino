@@ -1,79 +1,90 @@
 <template>
   <div class="game-background">
     <GenericContainer title="CAÇA-NÍQUEL">
-
-      <div class="game-header">
-        <div class="user-info">
-          <p class="balance-text">Saldo Atual: {{ balance }} Moedas</p>
-          <p class="result-text" v-if="resultMessage" :class="{'win-text': isWinning, 'lose-text': !isWinning}">{{ resultMessage }}</p>
-        </div>
-      </div>
-      
-      <div class="game-content">
-        <div class="bet-options">
-          <label for="bet" class="bet-label">Escolha sua aposta:</label>
-          <select id="bet" v-model="currentBet" class="bet-select">
-            <option v-for="amount in bets" :key="amount" :value="amount">
-              {{ amount }} Moedas
-            </option>
-          </select>
-        </div>
-
-        <div class="slot-machine">
-          <div
-          class="reel"
-          v-for="(column, columnIndex) in reels"
-          :key="columnIndex"
-          >
-          <div
-            class="symbol"
-            v-for="(symbol, rowIndex) in column"
-            :key="rowIndex"
-            >
-            <img v-if="symbol === '7'" src="../assets/numero7.webp" alt="7" class="symbol-image" />
-            <img v-else-if="symbol === 'C'" src="../assets/letrac.webp" alt="C" class="symbol-image" />
-            <img v-else-if="symbol === 'E'" src="../assets/letrae.webp" alt="E" class="symbol-image" />
-            <img v-else-if="symbol === 'U'" src="../assets/letrau.webp" alt="U" class="symbol-image" />
-            <img v-else-if="symbol === 'B'" src="../assets/letrab.webp" alt="B" class="symbol-image" />
-            <span v-else class="symbol-text">{{ symbol }}</span>
+      <div>
+        <div class="game-header">
+          <div class="user-info">
+            <p class="balance-text">Saldo Atual: {{ balance }} Moedas</p>
+            <p class="result-text" v-if="resultMessage" :class="{'win-text': isWinning, 'lose-text': !isWinning}">{{ resultMessage }}</p>
           </div>
         </div>
+        
+        <div class="game-content">
+          <div class="bet-options">
+            <label for="bet" class="bet-label">Escolha sua aposta:</label>
+            <select id="bet" v-model="currentBet" class="bet-select">
+              <option v-for="amount in bets" :key="amount" :value="amount">
+                {{ amount }} Moedas
+              </option>
+            </select>
+          </div>
+
+          <div class="slot-machine">
+            <div
+              class="reel"
+              v-for="(column, columnIndex) in reels"
+              :key="columnIndex"
+            >
+              <div
+                class="symbol"
+                v-for="(symbol, rowIndex) in column"
+                :key="rowIndex"
+              >
+                <img v-if="symbol === '7'" src="../assets/numero7.webp" alt="7" class="symbol-image" />
+                <img v-else-if="symbol === 'C'" src="../assets/letrac.webp" alt="C" class="symbol-image" />
+                <img v-else-if="symbol === 'E'" src="../assets/letrae.webp" alt="E" class="symbol-image" />
+                <img v-else-if="symbol === 'U'" src="../assets/letrau.webp" alt="U" class="symbol-image" />
+                <img v-else-if="symbol === 'B'" src="../assets/letrab.webp" alt="B" class="symbol-image" />
+                <span v-else class="symbol-text">{{ symbol }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <GenericButton :is-valid="!isDisabled" :text="isSpinning ? 'Girando...' : 'Girar'" @click="spinSlotMachine"/>
+          
+          <p v-if="currentBet > balance" class="error-message">
+            Saldo insuficiente para apostar {{ currentBet }} moedas.
+          </p>
+          
+          <GenericButton v-if="isGameOver" @click="goToHome" text="sair do jogo" />
+        </div>
       </div>
-      
-      <button :disabled="isSpinning || currentBet > balance" @click="spinSlotMachine" class="spin-button">
-        {{ isSpinning ? "Girando..." : "Girar" }}
-      </button>
-      
-      <p v-if="currentBet > balance" class="error-message">
-        Saldo insuficiente para apostar {{ currentBet }} moedas.
-      </p>
-    </div>
-  </GenericContainer>
+    </GenericContainer>
   </div>
 </template>
+
 
 <script>
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import GenericContainer from '@/components/GenericContainer.vue';
+import router from "@/router";
+import GenericButton from "@/components/GenericButton.vue";
 
 export default {
   components: {
     GenericContainer,
+    GenericButton,
   },
   data() {
     return {
-      userId: this.$route.params.userID, // Obtém o ID do usuário da URL
-      balance: 0, // Saldo inicial do jogador
-      resultMessage: '', // Mensagem do resultado
-      reels: Array(3).fill().map(() => ['7', 'C', 'E']), // Símbolos dos rolos
-      isSpinning: false, // Indica se os rolos estão girando
-      bets: [25, 50, 100, 200, 500], // Opções de apostas
-      currentBet: 25, // Aposta atual
-      isWinning: false, // Indica se o jogador ganhou
+      userId: this.$route.params.userID,
+      balance: 0,
+      resultMessage: '',
+      reels: Array(3).fill().map(() => ['7', 'C', 'E']),
+      isSpinning: false,
+      bets: [25, 50, 100, 200, 500],
+      currentBet: 25,
+      isWinning: false,
+      isGameOver: false,
     };
   },
   async created() {
     await this.fetchUserData();
+  },
+  computed: {
+    isDisabled() {
+      return this.isSpinning || this.currentBet > this.balance
+    }
   },
   methods: {
     async fetchUserData() {
@@ -176,9 +187,14 @@ export default {
       this.isSpinning = false;
 
       await this.updateUserData();
+      this.isGameOver = true;
+    },
+    goToHome() {
+      router.push('/'+this.userId)
     },
   },
 };
+
 </script>
 
 
@@ -202,10 +218,20 @@ export default {
 
 .game-content {
   padding-inline: 3em;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
 }
 
 .user-info {
   margin-bottom: 20px;
+}
+
+.game-over-message {
+  width: 100%;
 }
 
 .balance-text {

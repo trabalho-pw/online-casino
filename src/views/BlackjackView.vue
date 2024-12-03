@@ -45,6 +45,8 @@
   import Placar from '../components/Placar.vue';
   import ControlesDeJogo from '../components/ControlesDeJogo.vue';
   import approdape from '../components/Rodape.vue'; // Importa o Footer
+  import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+
   
   export default {
     components: {
@@ -67,9 +69,35 @@
         jogoIniciado: false,
         jogoFinalizado: false,
         jogadorVenceu: false,
+        userId: this.$route.params.userID,
+        xp: 0,
       };
     },
     methods: {
+        async fetchUserData() {
+        const db = getFirestore();
+        const userDoc = doc(db, "users", this.userId);
+        const userSnapshot = await getDoc(userDoc);
+
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          this.dinheiro = userData.coins || 0;
+          this.dinheiroFinal =  userData.coins || 0;
+          this.xp = userData.xp || 0;
+        } else {
+          console.error("Usuário não encontrado no Firestore");
+        }
+      },
+      async updateUserData() {
+        const db = getFirestore();
+        const userDoc = doc(db, "users", this.userId);
+
+        try {
+          await updateDoc(userDoc, { coins: this.dinheiro, xp: this.xp });
+        } catch (error) {
+          console.error("Erro ao atualizar o saldo do usuário:", error);
+        }
+      },
       criarBaralho() {
         let baralho = [];
         for (let naipe of this.naipes) {
@@ -151,9 +179,15 @@
             this.dinheiro -= 100; // Perde dinheiro
           }
         }
+
+        if(this.jogadorVenceu) {
+          this.xp += 10;
+        }
   
         // Atualizar o valor final do dinheiro
         this.dinheiroFinal = this.dinheiro;
+
+        this.updateUserData()
       },
       iniciarJogo() {
         this.jogoIniciado = true;
@@ -185,6 +219,9 @@
         this.dinheiro = this.dinheiroFinal;
         this.iniciarJogo();
       },
+    },
+    async created() {
+      await this.fetchUserData();
     },
   };
   </script>

@@ -38,7 +38,7 @@ const router = createRouter({
       component: MinesView,
     },
     {
-      path: '/blackjack',
+      path: '/blackjack/:userID',
       name: 'blackjack',
       component: BlackjackView,
     },
