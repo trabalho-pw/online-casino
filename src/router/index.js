@@ -40,7 +40,12 @@ const router = createRouter({
       path: '/blackjack',
       name: 'blackjack',
       component: BlackjackView,
-    }
+    },
+    {
+      path: '/caca-niquel',
+      name: 'caca-niquel',
+      component: () => import('@views/CacaNiquelView.vue'),
+    },
 
   ],
 })
