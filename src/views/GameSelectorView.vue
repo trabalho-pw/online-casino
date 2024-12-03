@@ -1,4 +1,5 @@
 <template>
+  <DailyGiftModal v-if="showDailyGiftModal" @close="showDailyGiftModal = false" :uid="uid"/>
   <main>
     <div class="game-cards-container">
       <UserCard
@@ -25,6 +26,7 @@ import GameCard from "@/components/GameCard.vue";
 import UserCard from "@/components/UserCard.vue";
 import { onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import DailyGiftModal from "@/components/DailyGiftModal.vue";
 import { auth } from '../firebase';
 
 const db = getFirestore()
@@ -34,10 +36,13 @@ export default {
   components: {
     GameCard,
     UserCard,
+    DailyGiftModal,
   },
   data() {
     return {
-      userData: null, 
+      userData: null,
+      showDailyGiftModal: false,
+      uid: '',
       games: [
         {
           title: "Caça-níquel",
@@ -64,25 +69,43 @@ export default {
     };
   },
   mounted() {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const uid = user.uid;
-          const userDocRef = doc(db, 'users', uid);
-          const userDocSnap = await getDoc(userDocRef);
-          if (userDocSnap.exists()) {
-            this.userData = userDocSnap.data(); 
-          } else {
-            console.error('Usuário não encontrado no Firestore');
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      try {
+        const uid = user.uid;
+        this.uid = uid;
+        const userDocRef = doc(db, 'users', uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          this.userData = userDocSnap.data();
+
+          if (
+            !this.userData.lastDailyGift ||
+            this.dateDifferenceInHours(new Date(this.userData.lastDailyGift), new Date()) >= 24
+          ) {
+            this.showDailyGiftModal = true;
           }
-        } catch (error) {
-          console.error('Erro ao buscar os dados do usuário:', error);
+        } else {
+          console.error('Usuário não encontrado no Firestore');
         }
-      } else {
-        console.log('Nenhum usuário está logado');
+      } catch (error) {
+        console.error('Erro ao buscar os dados do usuário:', error);
       }
-    });
-  },
+    } else {
+      console.log('Nenhum usuário está logado');
+    }
+  });
+},
+  methods: {
+    dateDifferenceInHours(date1, date2) {
+      const time1 = date1.getTime();
+      const time2 = date2.getTime();
+      
+      const differenceInMilliseconds = Math.abs(time1 - time2);
+      
+      return differenceInMilliseconds / (1000 * 60 * 60);
+    }
+  }
 };
 </script>
 
@@ -98,14 +121,13 @@ main {
 .game-cards-container {
   display: flex;
   flex-direction: column;
-  align-items: center;  
-  gap: 10px; 
+  align-items: center;
+  gap: 10px;
   padding: 10px;
-  width: 100%;  
+  width: 100%;
 }
 
 .game-card:first-child {
-  margin-top: 0; 
+  margin-top: 0;
 }
 </style>
-  

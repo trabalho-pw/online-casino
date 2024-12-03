@@ -1,18 +1,67 @@
 <script>
 import GenericButton from './GenericButton.vue'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { db } from '@/firebase'
 
 export default {
   name: 'DailyGiftModal',
   components: {
     GenericButton,
   },
+  props: {
+    uid: {
+      type: String,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      user: {},
+    }
+  },
+  emits: ['close'],
+  methods: {
+    async fetchUserData() {
+      console.log(this.uid)
+      try {
+        const userDoc = doc(db, 'users', this.uid)
+        const userSnapshot = await getDoc(userDoc)
+
+        if (userSnapshot.exists()) {
+          this.user = userSnapshot.data()
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async claimDailyGift() {
+      try {
+        const userDoc = doc(db, 'users', this.uid)
+        const now = new Date()
+
+        await updateDoc(userDoc, {
+          coins: this.user.coins + 200,
+          lastDailyGift: now.toISOString(),
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    closeModal() {
+      this.claimDailyGift()
+      this.$emit('close')
+    },
+  },
+  async mounted() {
+    await this.fetchUserData()
+  },
 }
 </script>
 
 <template>
-  <div class="modal-container">
+  <div class="modal-container" @click.self="closeModal">
     <div class="modal">
-      <button class="close-button">&times;</button>
+      <button class="close-button" @click="closeModal">&times;</button>
       <h1>Presente Diário</h1>
       <div class="reward">
         <img src="../assets/gift.svg" alt="imagem de presente" />
@@ -22,7 +71,7 @@ export default {
         </p>
       </div>
       <div class="modal-button">
-        <GenericButton text="resgatar" />
+        <GenericButton text="resgatar" @click="closeModal" />
       </div>
     </div>
   </div>
@@ -74,7 +123,7 @@ export default {
 .modal h1 {
   font-family: 'Bebas Neue', sans-serif;
   position: absolute;
-  top: .5em;
+  top: 0.5em;
   font-size: 2.25rem;
   color: #223f4a;
 }
