@@ -6,6 +6,7 @@ import router from '@/router'
 import { z } from 'zod'
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import { useNotificationStore } from '@/stores/notification'
 
 export default {
   name: 'RegisterView',
@@ -16,6 +17,7 @@ export default {
   },
   data() {
     return {
+      notificationStore: useNotificationStore(),
       user: { email: '', password: '' },
       emailSchema: z.string().email('Formato de e-mail inválido'),
       passwordSchema: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres.'),
@@ -36,10 +38,14 @@ export default {
 
         const uid = userCredential.user.uid
         router.push('/' + uid)
-        
-        console.log('Login bem-sucedido!');
       } catch (error) {
-        console.log(error.message);
+        console.log(error.code)
+        if(error.code == "auth/invalid-credential") {
+          this.notificationStore.showNotificationMessage('Credenciais inválidas. Tente novamente.', 'error')
+        }
+        else {
+          this.notificationStore.showNotificationMessage('Algo deu errado. Tente novamente mais tarde.', 'error')
+        }
       }
     }
   },
