@@ -23,7 +23,7 @@
     </div>
     <div v-if="isBetPlaced" class="status">
         <p>MULTIPLICADOR: {{ mult }}X</p>
-        <button :disabled="!isBetValid" @click="gameWin">RETIRAR: R${{ win }}</button>
+        <button :disabled="!isRetirarValid" @click="gameWin">RETIRAR: R${{ retirar }}</button>
     </div>
     <div v-if="isGameEnd" class="game-end">
         <h2 :class="{ 'win-message': isGameWin, 'lose-message': !isGameWin }">
@@ -55,9 +55,13 @@ data() {
         cash: 0,
         userData: null,
         userID: null,
+        retirar: 0,
     };
 },
 computed: {
+    isRetirarValid(){
+        return this.retirar != null && this.isGameOver != true;
+    },
     isBetValid() {
         return this.bet != null && this.bet <= this.cash && this.bet > 0;
     },
@@ -94,7 +98,7 @@ methods: {
         this.board = [];
         this.mines = [];
         this.mult = 1.0;
-        this.win = this.bet;
+        this.retirar = this.bet;
 
         for (let i = 0; i < this.totalSquares; i++) {
             this.board.push({ clicked: false, mine: false, icon: "" });
@@ -132,7 +136,7 @@ methods: {
         } else {
             this.mult += 0.5;
             square.icon = "fa fa-gem";
-            this.win = this.bet * this.mult;
+            this.retirar = this.bet * this.mult;
             if (this.mult >= 3.5) {
                 this.gameWin();
             }
@@ -143,6 +147,7 @@ methods: {
         this.isGameEnd = true;
         this.isGameInProgress = false;
         this.bet = null;
+        this.retira = null;
 
         this.mines.forEach(index => {
             const mineSquare = this.board[index];
@@ -153,13 +158,16 @@ methods: {
         this.updateUserData();
     },
     gameWin() {
-        this.cash += this.win;
+        this.cash += this.retirar;
         this.isGameWin = true;
         this.isGameEnd = true;
         this.isGameInProgress = false;
         this.bet = null;
 
         this.updateUserData();
+        
+        this.retirar = null
+        
     },
     goToHome() {
         this.$router.push('/'+this.userID);
