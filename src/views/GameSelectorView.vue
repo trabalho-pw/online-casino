@@ -18,9 +18,7 @@
         :gameUrl="game.gameUrl"
       />
     </div>
-    <footer>
-      <Rodape/>
-    </footer>
+    <Rodape/>
   </main>
 </template>
 

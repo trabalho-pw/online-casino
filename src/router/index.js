@@ -43,7 +43,7 @@ const router = createRouter({
       component: BlackjackView,
     },
     {
-      path: '/caca-niquel',
+      path: '/caca-niquel/:userID',
       name: 'caca-niquel',
       component: CacaNiquelView,
     },

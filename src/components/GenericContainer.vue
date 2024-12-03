@@ -3,7 +3,7 @@
     <div class="container-header">
       <div v-show="showLogo" class="logo">
         <img src="../assets/gold-coin.svg" alt="">
-        <h1>Logo</h1>
+        <h1>betgalaxy</h1>
       </div>
       <h1 class="title">{{ title }}</h1>
     </div>

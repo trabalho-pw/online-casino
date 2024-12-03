@@ -1,34 +1,35 @@
 <template>
   <div class="game-background">
-    <div class="game-header">
-      <h1 class="game-title">CAÇA-NÍQUEL</h1>
-      <div class="user-info">
-        <p class="balance-text">Saldo Atual: {{ balance }} Moedas</p>
-        <p class="result-text" v-if="resultMessage" :class="{'win-text': isWinning, 'lose-text': !isWinning}">{{ resultMessage }}</p>
-      </div>
-    </div>
+    <GenericContainer title="CAÇA-NÍQUEL">
 
-    <div class="game-content">
-      <div class="bet-options">
-        <label for="bet" class="bet-label">Escolha sua aposta:</label>
-        <select id="bet" v-model="currentBet" class="bet-select">
-          <option v-for="amount in bets" :key="amount" :value="amount">
-            {{ amount }} Moedas
-          </option>
-        </select>
+      <div class="game-header">
+        <div class="user-info">
+          <p class="balance-text">Saldo Atual: {{ balance }} Moedas</p>
+          <p class="result-text" v-if="resultMessage" :class="{'win-text': isWinning, 'lose-text': !isWinning}">{{ resultMessage }}</p>
+        </div>
       </div>
+      
+      <div class="game-content">
+        <div class="bet-options">
+          <label for="bet" class="bet-label">Escolha sua aposta:</label>
+          <select id="bet" v-model="currentBet" class="bet-select">
+            <option v-for="amount in bets" :key="amount" :value="amount">
+              {{ amount }} Moedas
+            </option>
+          </select>
+        </div>
 
-      <div class="slot-machine">
-        <div
+        <div class="slot-machine">
+          <div
           class="reel"
           v-for="(column, columnIndex) in reels"
           :key="columnIndex"
-        >
+          >
           <div
             class="symbol"
             v-for="(symbol, rowIndex) in column"
             :key="rowIndex"
-          >
+            >
             <img v-if="symbol === '7'" src="../assets/numero7.webp" alt="7" class="symbol-image" />
             <img v-else-if="symbol === 'C'" src="../assets/letrac.webp" alt="C" class="symbol-image" />
             <img v-else-if="symbol === 'E'" src="../assets/letrae.webp" alt="E" class="symbol-image" />
@@ -38,23 +39,31 @@
           </div>
         </div>
       </div>
-
+      
       <button :disabled="isSpinning || currentBet > balance" @click="spinSlotMachine" class="spin-button">
         {{ isSpinning ? "Girando..." : "Girar" }}
       </button>
-
+      
       <p v-if="currentBet > balance" class="error-message">
         Saldo insuficiente para apostar {{ currentBet }} moedas.
       </p>
     </div>
+  </GenericContainer>
   </div>
 </template>
 
 <script>
+import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+import GenericContainer from '@/components/GenericContainer.vue';
+
 export default {
+  components: {
+    GenericContainer,
+  },
   data() {
     return {
-      balance: 1000, // Saldo inicial do jogador
+      userId: this.$route.params.userID, // Obtém o ID do usuário da URL
+      balance: 0, // Saldo inicial do jogador
       resultMessage: '', // Mensagem do resultado
       reels: Array(3).fill().map(() => ['7', 'C', 'E']), // Símbolos dos rolos
       isSpinning: false, // Indica se os rolos estão girando
@@ -63,26 +72,47 @@ export default {
       isWinning: false, // Indica se o jogador ganhou
     };
   },
+  async created() {
+    await this.fetchUserData();
+  },
   methods: {
+    async fetchUserData() {
+      const db = getFirestore();
+      const userDoc = doc(db, "users", this.userId);
+      const userSnapshot = await getDoc(userDoc);
+
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        this.balance = userData.coins || 0;
+      } else {
+        console.error("Usuário não encontrado no Firestore");
+      }
+    },
+    async updateUserData() {
+      const db = getFirestore();
+      const userDoc = doc(db, "users", this.userId);
+
+      try {
+        await updateDoc(userDoc, { coins: this.balance });
+      } catch (error) {
+        console.error("Erro ao atualizar o saldo do usuário:", error);
+      }
+    },
     spinSlotMachine() {
-      // Verifica se o jogador tem saldo suficiente
       if (this.currentBet > this.balance) {
         this.resultMessage = "Saldo insuficiente!";
         return;
       }
 
-      // Deduz a aposta do saldo ao iniciar o giro
       this.balance -= this.currentBet;
       this.isSpinning = true;
 
-      // Símbolos disponíveis para o giro
       const symbols = ['7', 'C', 'E', 'U', 'B'];
-      const spinDurations = [2000, 2200, 2400]; // Durações diferentes para cada coluna
-      const interval = 100; // Intervalo para atualização dos símbolos
+      const spinDurations = [2000, 2200, 2400];
+      const interval = 100;
 
       let columnsStopped = 0;
 
-      // Função para gerar símbolos aleatórios para uma coluna
       const spinColumn = (columnIndex, spinDuration) => {
         let elapsedTime = 0;
         const spinInterval = setInterval(() => {
@@ -92,7 +122,6 @@ export default {
 
           elapsedTime += interval;
 
-          // Quando o tempo total de giro for atingido, parar a animação
           if (elapsedTime >= spinDuration) {
             clearInterval(spinInterval);
             columnsStopped += 1;
@@ -103,21 +132,17 @@ export default {
         }, interval);
       };
 
-      // Iniciar o giro de cada coluna com durações diferentes
       this.reels.forEach((_, columnIndex) => {
         spinColumn(columnIndex, spinDurations[columnIndex]);
       });
     },
-
-    finishSpin() {
-      // Conta os símbolos na linha do meio dos rolos
+    async finishSpin() {
       const middleRowSymbols = this.reels.map(column => column[1]);
       const counts = middleRowSymbols.reduce((acc, symbol) => {
         acc[symbol] = (acc[symbol] || 0) + 1;
         return acc;
       }, {});
 
-      // Lógica para determinar o tipo de vitória
       const isJackpot = counts['7'] === 3;
       const isThreeEqual = Object.values(counts).includes(3) && !isJackpot;
       const isTwoSevens = counts['7'] === 2 && Object.values(counts).includes(1);
@@ -125,38 +150,37 @@ export default {
 
       let winnings = 0;
 
-      // Avalia o tipo de combinação
       if (isJackpot) {
-        winnings = this.currentBet * 6; // 6x aposta
+        winnings = this.currentBet * 6;
         this.resultMessage = `Jackpot! Você ganhou ${winnings} moedas!`;
         this.isWinning = true;
       } else if (isThreeEqual) {
-        winnings = this.currentBet * 4; // 4x aposta
+        winnings = this.currentBet * 4;
         this.resultMessage = `Parabéns! Você ganhou ${winnings} moedas!`;
         this.isWinning = true;
       } else if (isTwoSevens) {
-        winnings = this.currentBet * 2; // 2x aposta
+        winnings = this.currentBet * 2;
         this.resultMessage = `Boa! Você ganhou ${winnings} moedas!`;
         this.isWinning = true;
       } else if (isTwoEqualOneDifferent) {
-        winnings = 0; // Sem ganhos
+        winnings = 0;
         this.resultMessage = `Você perdeu ${this.currentBet} moedas.`;
         this.isWinning = false;
       } else {
-        winnings = 0; // Sem ganhos
+        winnings = 0;
         this.resultMessage = `Ah, não! Você perdeu ${this.currentBet} moedas.`;
         this.isWinning = false;
       }
 
-      // Atualiza o saldo com os ganhos (se houver)
       this.balance += winnings;
-
-      // Libera o botão de girar novamente
       this.isSpinning = false;
+
+      await this.updateUserData();
     },
   },
 };
 </script>
+
 
 <style scoped>
 .game-background {
@@ -165,19 +189,19 @@ export default {
   background-attachment: fixed;
   background-position: bottom;
   height: 100vh;
-  color: white;
   text-align: center;
+  display: flex;
+  align-items: center;
+  font-family: 'Lato', sans-serif;
+  justify-content: center;
 }
 
 .game-header {
   padding: 20px;
 }
 
-.game-title {
-  font-size: 48px; /* Tamanho grande para o título */
-  color: orange; /* Cor laranja/vermelha */
-  text-transform: uppercase; /* Caixa alta */
-  margin: 10px 0;
+.game-content {
+  padding-inline: 3em;
 }
 
 .user-info {
@@ -204,6 +228,9 @@ export default {
 
 .bet-options {
   margin: 20px 0;
+  display: flex;
+  gap: 1em;
+  justify-content: center;
 }
 
 .bet-label {
