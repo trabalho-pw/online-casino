@@ -55,7 +55,7 @@ export default {
           imageSrc: "src/assets/caca-niquel-svg.png",
           description: "Explore a emoção do cassino com nosso jogo de Caça-níquel! Gire e descubra combinações vencedoras de símbolos para ganhar prêmios incríveis. Aposte e sinta a adrenalina enquanto busca o grande prêmio!",
           reduced_description: "Explore a emoção do cassino com nosso jogo de Caça-níquel!",
-          gameUrl: "#",
+          gameUrl: "/caca-niquel",
         },
         {
           title: "Blackjack",
